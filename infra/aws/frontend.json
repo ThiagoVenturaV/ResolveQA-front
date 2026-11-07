@@ -100,6 +100,20 @@
         }
       }
     },
+    "PrettyUrlRewrite": {
+      "Type": "AWS::CloudFront::Function",
+      "Properties": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-pretty-urls"
+        },
+        "AutoPublish": true,
+        "FunctionConfig": {
+          "Comment": "Rewrite clean /admin and /quadro paths to Next static export .html objects",
+          "Runtime": "cloudfront-js-2.0"
+        },
+        "FunctionCode": "function handler(event) {\n  var request = event.request;\n  var uri = request.uri;\n  if (uri === '/admin' || uri === '/admin/') {\n    request.uri = '/admin.html';\n  } else if (uri === '/quadro' || uri === '/quadro/') {\n    request.uri = '/quadro.html';\n  }\n  return request;\n}\n"
+      }
+    },
     "Distribution": {
       "Type": "AWS::CloudFront::Distribution",
       "Properties": {
@@ -143,7 +157,18 @@
             },
             "ResponseHeadersPolicyId": {
               "Ref": "SecurityHeaders"
-            }
+            },
+            "FunctionAssociations": [
+              {
+                "EventType": "viewer-request",
+                "FunctionARN": {
+                  "Fn::GetAtt": [
+                    "PrettyUrlRewrite",
+                    "FunctionMetadata.FunctionARN"
+                  ]
+                }
+              }
+            ]
           },
           "CustomErrorResponses": [
             {
