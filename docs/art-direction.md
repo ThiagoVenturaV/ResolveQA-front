@@ -14,11 +14,11 @@ A referência indicada pelo usuário é https://keytotwo.com.br/. A leitura adot
 
 ## Movimento
 
-O personagem procedural funciona em qualquer uma das seis paletas. A movimentação dos cards mede posições reais do DOM para acompanhar a composição responsiva. A preferência de movimento reduzido substitui o transporte prolongado por atualização direta do estado.
+O atlas arco-íris tem nove estados de animação e seis opções de matiz. A movimentação dos cards mede posições reais do DOM para acompanhar a composição responsiva. A preferência de movimento reduzido substitui o transporte prolongado por atualização direta do estado.
 
 ## Assets
 
 - `public/moodboards/mola-paper.png`: três variantes, paletas, poses e estudos de Kanban.
 - `public/moodboards/mola-night.png`: três variantes e estudos noturnos.
 
-Ambas as pranchas foram criadas por geração de imagem para este projeto. São propostas de direção visual; o sprite em runtime é uma implementação própria em código, e não uma extração automática dessas imagens.
+Ambas as pranchas foram criadas por geração de imagem para este projeto. A revisão arco-íris usa o desenho da primeira e a interação da segunda, com arte nova gerada por estado e física própria. Veja [arte e evidências](rainbow-mascot.md).

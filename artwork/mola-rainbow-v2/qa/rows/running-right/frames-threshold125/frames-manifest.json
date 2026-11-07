@@ -1,0 +1,28 @@
+{
+  "ok": true,
+  "chroma_key": {
+    "hex": "#FF00FF",
+    "rgb": [
+      255,
+      0,
+      255
+    ],
+    "threshold": 125.0
+  },
+  "rows": [
+    {
+      "state": "running-right",
+      "frames": [
+        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames-threshold125/running-right/00.png",
+        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames-threshold125/running-right/01.png",
+        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames-threshold125/running-right/02.png",
+        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames-threshold125/running-right/03.png",
+        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames-threshold125/running-right/04.png",
+        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames-threshold125/running-right/05.png",
+        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames-threshold125/running-right/06.png",
+        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames-threshold125/running-right/07.png"
+      ],
+      "method": "components"
+    }
+  ]
+}
