@@ -1,0 +1,111 @@
+"use client";
+
+import { forwardRef, useImperativeHandle, useRef } from "react";
+import { ATLAS, CLIPS, TRANSPORT_CLIP, grabAt, type TransportPhase } from "./atlas";
+import { MolaSprite, skins } from "./spring";
+
+export type TransportHandle = {
+  show: (task: { id: string; title: string }, skin: number) => void;
+  paint: (snap: { phase: TransportPhase; x: number; y: number; clipFrame: number }) => void;
+  hide: () => void;
+};
+
+type GrabState = { x: number; y: number; clip: string; frame: number };
+
+/**
+ * Path (x,y) = world grab/card anchor (top of coil). Sprite offset so atlas grab
+ * coincides with the card. Grab eases across clip changes to avoid card snaps.
+ */
+export const TransportLayer = forwardRef<TransportHandle>(function TransportLayer(_, ref) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const idRef = useRef<HTMLSpanElement>(null);
+  const titleRef = useRef<HTMLElement>(null);
+  const spriteHost = useRef<HTMLDivElement>(null);
+  const grabSmooth = useRef<GrabState | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    show(task, skin) {
+      grabSmooth.current = null;
+      const root = rootRef.current;
+      if (!root) return;
+      root.hidden = false;
+      if (idRef.current) idRef.current.textContent = task.id;
+      if (titleRef.current) titleRef.current.textContent = task.title;
+      const sprite = spriteHost.current?.querySelector<HTMLElement>(".mola-sprite");
+      if (sprite) {
+        const hue = skins[skin]?.hue ?? 0;
+        sprite.style.filter = hue === 0 ? "none" : `hue-rotate(${hue}deg)`;
+      }
+    },
+    paint(snap) {
+      const root = rootRef.current;
+      if (!root || root.hidden) return;
+      root.style.left = `${snap.x}px`;
+      root.style.top = `${snap.y}px`;
+      root.dataset.phase = snap.phase;
+
+      const clip = TRANSPORT_CLIP[snap.phase];
+      const def = CLIPS[clip];
+      const frame = ((snap.clipFrame % def.count) + def.count) % def.count;
+      const w = 128;
+      const h = Math.round(w * (ATLAS.cellH / ATLAS.cellW));
+      const scale = w / ATLAS.cellW;
+      const [tx, ty] = grabAt(clip, frame);
+
+      let gx = tx;
+      let gy = ty;
+      const prev = grabSmooth.current;
+      if (prev && (prev.clip !== clip || Math.abs(prev.y - ty) > 10 || Math.abs(prev.x - tx) > 4)) {
+        // Cross-clip / large grab jump: ease toward new anchor (~1 frame at 60fps ≈ 0.22 blend keeps C0 feel).
+        const blend = 0.28;
+        gx = prev.x + (tx - prev.x) * blend;
+        gy = prev.y + (ty - prev.y) * blend;
+      } else if (prev) {
+        const blend = 0.55;
+        gx = prev.x + (tx - prev.x) * blend;
+        gy = prev.y + (ty - prev.y) * blend;
+      }
+      grabSmooth.current = { x: gx, y: gy, clip, frame };
+
+      if (spriteHost.current) {
+        spriteHost.current.style.transform = `translate(${(-gx * scale).toFixed(2)}px, ${(-gy * scale).toFixed(2)}px)`;
+      }
+      const sprite = spriteHost.current?.querySelector<HTMLElement>(".mola-sprite");
+      if (sprite) {
+        const index = def.row * ATLAS.columns + frame;
+        const col = index % ATLAS.columns;
+        const row = Math.floor(index / ATLAS.columns);
+        sprite.style.width = `${w}px`;
+        sprite.style.height = `${h}px`;
+        sprite.style.backgroundSize = `${ATLAS.columns * w}px ${ATLAS.rows * h}px`;
+        sprite.style.backgroundPosition = `${-col * w}px ${-row * h}px`;
+        sprite.dataset.clip = clip;
+        sprite.dataset.frame = String(frame);
+      }
+
+      if (cardRef.current) {
+        const rot = snap.phase === "carry" ? -4 : snap.phase === "reach" ? -8 : 0;
+        cardRef.current.style.transform = `translate(-50%, -100%) rotate(${rot}deg)`;
+        cardRef.current.style.opacity = snap.phase === "compress" ? "0.75" : "1";
+      }
+    },
+    hide() {
+      grabSmooth.current = null;
+      const root = rootRef.current;
+      if (root) root.hidden = true;
+    },
+  }));
+
+  return (
+    <div className="transport" ref={rootRef} aria-hidden="true" hidden>
+      <div className="transport-card" ref={cardRef}>
+        <span ref={idRef} />
+        <strong ref={titleRef} />
+      </div>
+      <div className="transport-sprite" ref={spriteHost}>
+        <MolaSprite skin={0} width={128} pose="carry" frame={0} carrying />
+      </div>
+    </div>
+  );
+});

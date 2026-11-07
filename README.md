@@ -20,7 +20,7 @@ npm run start
 
 ## O que explorar
 
-- Seis personagens/paletas: Lima, Tangerina, Lavanda, Cromo, Fliperama e Azul.
+- Uma mola arco-íris, com seis opções de matiz da mesma arte.
 - Avanço manual, reprodução automática pausável e arrastar/soltar cards.
 - Criação de tarefas, filtro por agente, detalhes e registro de eventos.
 - Estado salvo no navegador, importação e exportação de snapshots JSON.
@@ -31,7 +31,7 @@ O quadro inicia em **modo demonstração**. Os nomes dos agentes e as tarefas in
 
 ## Direção visual
 
-A referência de movimento é a landing da [Keytotwo](https://keytotwo.com.br/). A identidade da Mola, o personagem procedural e as pranchas são próprios.
+A referência de movimento é a landing da [Keytotwo](https://keytotwo.com.br/). A identidade da Mola, as pranchas e o atlas foram gerados para este projeto.
 
 | Prancha | Explorações |
 | --- | --- |
@@ -41,13 +41,13 @@ A referência de movimento é a landing da [Keytotwo](https://keytotwo.com.br/).
 ![Mola — Playful Paper](public/moodboards/mola-paper.png)
 ![Mola — After Hours](public/moodboards/mola-night.png)
 
-As imagens foram geradas para esta exploração. O personagem da interface é desenhado por código e anima sem depender de recortes das pranchas.
+O personagem usa um atlas gerado por estado, baseado no desenho da primeira prancha. O transporte adapta a interação da segunda prancha. Veja [arte, movimento e evidências](docs/rainbow-mascot.md).
 
 ## Fonte
 
 - `app/page.tsx`: estado do quadro e interações.
 - `app/globals.css`: composição, responsividade e movimento.
-- `components/mola/`: personagem procedural e variantes.
+- `components/mola/`: atlas, física, palco interativo e transporte.
 - `public/moodboards/`: pranchas PNG em resolução original.
 - [Contrato de snapshot](docs/snapshots.md): formato de intercâmbio local.
 - [Direção visual](docs/art-direction.md): decisões e contexto.
