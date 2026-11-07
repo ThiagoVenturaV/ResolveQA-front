@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Mola — ResolveQA",
-  description: "Trabalho em movimento. Um Kanban em pixel art acompanhado por uma mola animada.",
+  description: "Landing, quadro com mola arco-íris e admin de métricas em modo demonstração.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
