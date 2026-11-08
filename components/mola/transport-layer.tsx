@@ -2,12 +2,14 @@
 
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { ATLAS, CLIPS, TRANSPORT_CLIP, grabAt, type ClipName } from "./atlas";
+import { paintSlinky } from "./slinky";
+import { smoothstep } from "./physics";
 import type { TransportSnapshot } from "./transport";
 import { MolaSprite, skins } from "./spring";
 
 export type TransportHandle = {
   show: (task: { id: string; title: string }, skin: number) => void;
-  paint: (snap: Pick<TransportSnapshot, "phase" | "x" | "y" | "clipFrame" | "facing" | "local" | "state">) => void;
+  paint: (snap: Pick<TransportSnapshot, "phase" | "x" | "y" | "clipFrame" | "facing" | "local" | "state" | "slinkyCycle">) => void;
   hide: () => void;
 };
 
@@ -48,7 +50,7 @@ export const TransportLayer = forwardRef<TransportHandle>(function TransportLaye
       root.dataset.phase = snap.phase;
 
       root.dataset.state = snap.state ?? "IDLE";
-      const walking = ["seek", "carry", "return"].includes(snap.phase);
+      const walking = snap.phase === "carry";
       const clip: ClipName = walking ? (snap.facing === -1 ? "runLeft" : "runRight") : TRANSPORT_CLIP[snap.phase];
       const def = CLIPS[clip];
       const frame = ((snap.clipFrame % def.count) + def.count) % def.count;
@@ -87,6 +89,11 @@ export const TransportLayer = forwardRef<TransportHandle>(function TransportLaye
         sprite.style.backgroundPosition = `${-col * w}px ${-row * h}px`;
         sprite.dataset.clip = clip;
         sprite.dataset.frame = String(frame);
+        const unloaded = ["seek", "return", "idle", "celebrate", "compress"].includes(snap.phase);
+        const moving = snap.phase === "seek" || snap.phase === "return";
+        const local = snap.local ?? 0;
+        const strength = moving ? Math.sin(Math.PI * local) ** 0.4 : snap.phase === "compress" ? 0.16 * (1 - smoothstep(local)) : 0;
+        paintSlinky(sprite, unloaded ? { cycle: snap.slinkyCycle ?? 0, strength, facing: snap.facing ?? 1 } : null);
       }
 
       if (cardRef.current) {
