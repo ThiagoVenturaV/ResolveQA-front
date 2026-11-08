@@ -17,3 +17,8 @@
 @media(max-width:1100px){.landing-hero{margin:0 -36px;padding:0 36px 48px}.admin-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:800px){.landing-hero{margin:0 -24px;padding:0 24px 40px;min-height:560px}.landing-gates{grid-template-columns:1fr}.admin-hero{grid-template-columns:1fr}.admin-grid{grid-template-columns:1fr}.landing-brand{letter-spacing:-4px}}
 @media(max-width:600px){.landing-hero{margin:0 -20px;padding:72px 20px 36px;min-height:520px}.landing-cta{width:100%;justify-content:center}.admin-kpis{grid-template-columns:1fr 1fr}.admin-bar-row{grid-template-columns:1fr;gap:6px}.section-nav{gap:22px;height:40px;font-size:10px}}
+
+/* Keep the source readable until Mola reaches it. */
+.task-card.in-transit[data-seeking="true"] { opacity: 1; transform: none; }
+.transport-card[hidden] { display: none; }
+

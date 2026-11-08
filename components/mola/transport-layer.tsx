@@ -1,12 +1,13 @@
 "use client";
 
 import { forwardRef, useImperativeHandle, useRef } from "react";
-import { ATLAS, CLIPS, TRANSPORT_CLIP, grabAt, type TransportPhase } from "./atlas";
+import { ATLAS, CLIPS, TRANSPORT_CLIP, grabAt, type ClipName } from "./atlas";
+import type { TransportSnapshot } from "./transport";
 import { MolaSprite, skins } from "./spring";
 
 export type TransportHandle = {
   show: (task: { id: string; title: string }, skin: number) => void;
-  paint: (snap: { phase: TransportPhase; x: number; y: number; clipFrame: number }) => void;
+  paint: (snap: Pick<TransportSnapshot, "phase" | "x" | "y" | "clipFrame" | "facing" | "local" | "state">) => void;
   hide: () => void;
 };
 
@@ -30,6 +31,7 @@ export const TransportLayer = forwardRef<TransportHandle>(function TransportLaye
       const root = rootRef.current;
       if (!root) return;
       root.hidden = false;
+      if (cardRef.current) cardRef.current.hidden = true;
       if (idRef.current) idRef.current.textContent = task.id;
       if (titleRef.current) titleRef.current.textContent = task.title;
       const sprite = spriteHost.current?.querySelector<HTMLElement>(".mola-sprite");
@@ -45,7 +47,9 @@ export const TransportLayer = forwardRef<TransportHandle>(function TransportLaye
       root.style.top = `${snap.y}px`;
       root.dataset.phase = snap.phase;
 
-      const clip = TRANSPORT_CLIP[snap.phase];
+      root.dataset.state = snap.state ?? "IDLE";
+      const walking = ["seek", "carry", "return"].includes(snap.phase);
+      const clip: ClipName = walking ? (snap.facing === -1 ? "runLeft" : "runRight") : TRANSPORT_CLIP[snap.phase];
       const def = CLIPS[clip];
       const frame = ((snap.clipFrame % def.count) + def.count) % def.count;
       const w = 128;
@@ -69,7 +73,8 @@ export const TransportLayer = forwardRef<TransportHandle>(function TransportLaye
       grabSmooth.current = { x: gx, y: gy, clip, frame };
 
       if (spriteHost.current) {
-        spriteHost.current.style.transform = `translate(${(-gx * scale).toFixed(2)}px, ${(-gy * scale).toFixed(2)}px)`;
+        // Keep the sprite's floor fixed; the load follows the animated top coil.
+        spriteHost.current.style.transform = `translate(${-96 * scale}px, ${-43 * scale}px)`;
       }
       const sprite = spriteHost.current?.querySelector<HTMLElement>(".mola-sprite");
       if (sprite) {
@@ -85,9 +90,10 @@ export const TransportLayer = forwardRef<TransportHandle>(function TransportLaye
       }
 
       if (cardRef.current) {
+        cardRef.current.hidden = ["seek", "return", "idle", "celebrate"].includes(snap.phase);
         const rot = snap.phase === "carry" ? -4 : snap.phase === "reach" ? -8 : 0;
-        cardRef.current.style.transform = `translate(-50%, -100%) rotate(${rot}deg)`;
-        cardRef.current.style.opacity = snap.phase === "compress" ? "0.75" : "1";
+        cardRef.current.style.transform = `translate(-50%, -100%) translate(${((gx - 96) * scale).toFixed(2)}px, ${((gy - 43) * scale).toFixed(2)}px) rotate(${rot}deg)`;
+        cardRef.current.style.opacity = snap.phase === "compress" ? String((snap.local ?? 0) * 0.75) : "1";
       }
     },
     hide() {
@@ -109,3 +115,4 @@ export const TransportLayer = forwardRef<TransportHandle>(function TransportLaye
     </div>
   );
 });
+

@@ -119,9 +119,10 @@ export default function Home() {
 
     lock.current = true;
     setBusyId(task.id);
+    document.querySelector<HTMLElement>(cardSel)?.setAttribute("data-seeking", "true");
     let delivered = false;
     // Frozen origin after pickup — source card fades; DOM from becomes unreliable mid-flight.
-    let frozenFrom = a;
+    const frozenFrom = a;
 
     const deliver = () => {
       if (delivered) return;
@@ -132,6 +133,7 @@ export default function Home() {
 
     const finish = () => {
       deliver();
+      document.querySelector<HTMLElement>(cardSel)?.removeAttribute("data-seeking");
       transportRef.current?.hide();
       setBusyId(null);
       lock.current = false;
@@ -144,24 +146,24 @@ export default function Home() {
     }
 
     transportRef.current?.show({ id: task.id, title: task.title }, skinRef.current);
-    transportRef.current?.paint({ phase: "compress", x: a.x, y: a.y, clipFrame: 0 });
+
 
     stopTransport.current?.();
     stopTransport.current = runTransport({
+      getHome: () => {
+        const r = document.querySelector<HTMLElement>(".board-toolbar")?.getBoundingClientRect();
+        return r ? { x: Math.min(window.innerWidth - 70, Math.max(70, r.left + 70)), y: r.bottom + 20 } : readFrom();
+      },
       getFrom: () => {
         // Prefer live source while still in origin column; else frozen pickup point.
         const live = !delivered ? readFrom() : null;
-        if (live) frozenFrom = live;
+        if (!delivered) return live;
         return frozenFrom;
       },
       getTo: () => readTo(),
       onFrame: snap => {
-        transportRef.current?.paint({
-          phase: snap.phase,
-          x: snap.x,
-          y: snap.y,
-          clipFrame: snap.clipFrame,
-        });
+        if (snap.phase !== "seek") document.querySelector<HTMLElement>(cardSel)?.removeAttribute("data-seeking");
+        transportRef.current?.paint(snap);
         // Commit only after delivery completes — celebrate is post-drop.
         if (snap.phase === "celebrate") deliver();
       },
@@ -216,3 +218,4 @@ export default function Home() {
     {image && <Modal title={image.includes("paper") ? "01 / Dias de papel" : "02 / Depois do último pixel"} onClose={() => setImage(null)} wide><img className="full-moodboard" src={image} alt="Moodboard ampliado de variantes da mola em pixel art" /><a className="text-link image-download" href={image} target="_blank" rel="noreferrer">Abrir imagem original <ExternalLink size={14} /></a></Modal>}
   </div>;
 }
+

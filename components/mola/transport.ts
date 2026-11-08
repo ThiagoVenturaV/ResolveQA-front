@@ -8,12 +8,16 @@ export type TransportSnapshot = {
   x: number;
   y: number;
   clipFrame: number;
+  facing?: 1 | -1;
+  local?: number;
+  state?: "IDLE" | "SEEKING_TASK" | "PICKING_TASK" | "CARRYING_TASK" | "DELIVERING_TASK" | "RETURNING";
   progress: number;
   done: boolean;
   aborted?: boolean;
 };
 
 type EndpointFns = {
+  getHome?: () => Point | null;
   getFrom: () => Point | null;
   getTo: () => Point | null;
 };
@@ -25,16 +29,20 @@ type TransportOptions = EndpointFns & {
 };
 
 const PHASES: { phase: TransportPhase; duration: number }[] = [
+  { phase: "seek", duration: 0.8 },
   { phase: "compress", duration: 0.32 },
   { phase: "reach", duration: 0.36 },
   { phase: "carry", duration: 1.15 },
   { phase: "deliver", duration: 0.28 },
-  { phase: "celebrate", duration: 0.55 },
+  { phase: "celebrate", duration: 0.3 },
+  { phase: "return", duration: 0.8 },
+  { phase: "idle", duration: 0.1 },
 ];
 
 const TOTAL = PHASES.reduce((s, p) => s + p.duration, 0);
 
 type Waypoints = {
+  home: Point;
   start: Point;
   afterCompress: Point;
   afterReach: Point;
@@ -46,9 +54,10 @@ type Waypoints = {
  * Shared joints eliminate the measured 6 / 24 / 8 / 14 px discontinuities:
  * compress↔reach, reach↔carry, carry↔deliver, deliver↔celebrate.
  */
-function buildWaypoints(from: Point, to: Point): Waypoints {
+export function buildWaypoints(from: Point, to: Point, home: Point = from): Waypoints {
   const dx = to.x - from.x;
   return {
+    home,
     start: { x: from.x, y: from.y },
     afterCompress: { x: from.x, y: from.y + 6 },
     afterReach: { x: from.x + dx * 0.08, y: from.y - 14 },
@@ -77,12 +86,15 @@ function clamp01(t: number) {
 
 export function samplePath(wp: Waypoints, phase: TransportPhase, local: number): Point {
   const u = smoothstep(local);
+  if (phase === "seek") return lerpPoint(wp.home, wp.start, u);
+  if (phase === "return") return lerpPoint(wp.landed, wp.home, u);
+  if (phase === "idle") return wp.home;
   if (phase === "compress") return lerpPoint(wp.start, wp.afterCompress, u);
   if (phase === "reach") return lerpPoint(wp.afterCompress, wp.afterReach, u);
   if (phase === "carry") {
     const p = lerpPoint(wp.afterReach, wp.afterCarry, u);
     // Arc vanishes at endpoints → C0 at carry joints (removes the old ~24px snap).
-    p.y -= Math.sin(u * Math.PI) * 28;
+    p.y -= Math.sin(u * Math.PI) * 4;
     return p;
   }
   if (phase === "deliver") return lerpPoint(wp.afterCarry, wp.landed, u);
@@ -105,17 +117,17 @@ export function runTransport(opts: TransportOptions) {
   let stopped = false;
   let phaseFrameBase = 0;
   let lastPhase: TransportPhase | null = null;
-  let resizeAbort = false;
+
 
   const finish = (aborted: boolean) => {
     if (stopped) return;
     stopped = true;
     cancelAnimationFrame(raf);
-    window.removeEventListener("resize", onResize);
+
     opts.onComplete({ aborted });
   };
 
-  const onResize = () => { resizeAbort = true; };
+
 
   const emit = (snap: TransportSnapshot) => {
     if (!stopped) opts.onFrame(snap);
@@ -130,20 +142,17 @@ export function runTransport(opts: TransportOptions) {
     return () => { stopped = true; };
   }
 
-  window.addEventListener("resize", onResize, { passive: true });
+
 
   const tick = (now: number) => {
     if (stopped) return;
+    if (opts.reducedMotion === undefined && prefersReducedMotion()) {
+      finish(false);
+      return;
+    }
     if (!last) last = now;
     const dt = limitDelta((now - last) / 1000);
     last = now;
-
-    if (resizeAbort) {
-      const to = opts.getTo() ?? opts.getFrom();
-      if (to) emit({ phase: "celebrate", x: to.x, y: to.y, clipFrame: 0, progress: 1, done: true, aborted: true });
-      finish(true);
-      return;
-    }
 
     const from = opts.getFrom();
     const to = opts.getTo();
@@ -152,15 +161,16 @@ export function runTransport(opts: TransportOptions) {
       return;
     }
 
-    const wp = buildWaypoints(from, to);
+    const wp = buildWaypoints(from, to, opts.getHome?.() ?? from);
     elapsed += dt;
     clipClock += dt;
 
     if (elapsed >= TOTAL) {
-      const clip = TRANSPORT_CLIP.celebrate;
-      const end = samplePath(wp, "celebrate", 1);
+      const clip = TRANSPORT_CLIP.idle;
+      const end = samplePath(wp, "idle", 1);
       emit({
-        phase: "celebrate",
+        phase: "idle",
+        state: "IDLE",
         x: end.x,
         y: end.y,
         clipFrame: CLIPS[clip].count - 1,
@@ -178,7 +188,8 @@ export function runTransport(opts: TransportOptions) {
       clipClock = 0;
     }
     const clip = TRANSPORT_CLIP[phase];
-    const fps = CLIPS[clip].fps;
+    const walking = phase === "seek" || phase === "carry" || phase === "return";
+    const fps = walking ? 10 : CLIPS[clip].fps;
     while (clipClock >= 1 / fps) {
       clipClock -= 1 / fps;
       frame += 1;
@@ -187,6 +198,9 @@ export function runTransport(opts: TransportOptions) {
     const pos = samplePath(wp, phase, local);
     emit({
       phase,
+      local,
+      state: phase === "seek" ? "SEEKING_TASK" : phase === "carry" ? "CARRYING_TASK" : phase === "return" ? "RETURNING" : phase === "idle" ? "IDLE" : phase === "compress" || phase === "reach" ? "PICKING_TASK" : "DELIVERING_TASK",
+      facing: (phase === "seek" ? from.x - wp.home.x : phase === "return" ? wp.home.x - to.x : to.x - from.x) < 0 ? -1 : 1,
       x: pos.x,
       y: pos.y,
       clipFrame: (frame - phaseFrameBase) % CLIPS[clip].count,
@@ -202,6 +216,7 @@ export function runTransport(opts: TransportOptions) {
   return () => {
     stopped = true;
     cancelAnimationFrame(raf);
-    window.removeEventListener("resize", onResize);
+
   };
 }
+
