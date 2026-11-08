@@ -2,13 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Activity, ArrowRight, CheckCheck, Clock3, Radio, Users } from "lucide-react";
+import { Activity, ArrowRight, CheckCheck, CircleDollarSign, Clock3, Radio, Users } from "lucide-react";
 import { SiteHeader } from "@/components/site/site-header";
 
 type Status = "todo" | "doing" | "done";
 type Agent = "Codex" | "cursor" | "Antigravity";
 type Task = { id: string; title: string; status: Status; agent: Agent; priority: "Alta" | "Normal" };
 type Event = { id: string; text: string; time: string };
+/** Optional labeled estimate from backend/API — never fabricated in the browser. */
 type UsageSnapshot = {
   version: 1;
   label: "estimate";
@@ -24,6 +25,10 @@ const KEY = "mola.workspace.v1";
 const USAGE_KEY = "mola.usage.v1";
 const agents: Agent[] = ["Codex", "cursor", "Antigravity"];
 
+function isNonNegFinite(n: unknown): n is number {
+  return typeof n === "number" && Number.isFinite(n) && n >= 0;
+}
+
 function readUsageSnapshot(): UsageSnapshot | null {
   try {
     const saved = JSON.parse(localStorage.getItem(USAGE_KEY) || "null");
@@ -31,15 +36,25 @@ function readUsageSnapshot(): UsageSnapshot | null {
       saved?.version === 1 &&
       saved?.currency === "USD" &&
       saved?.label === "estimate" &&
-      typeof saved.llm_calls === "number" &&
-      typeof saved.tokens_in === "number" &&
-      typeof saved.tokens_out === "number" &&
-      typeof saved.estimated_usd === "number"
+      isNonNegFinite(saved.llm_calls) &&
+      isNonNegFinite(saved.tokens_in) &&
+      isNonNegFinite(saved.tokens_out) &&
+      isNonNegFinite(saved.estimated_usd)
     ) {
-      return saved as UsageSnapshot;
+      const source = typeof saved.source === "string" ? saved.source.slice(0, 80) : undefined;
+      return {
+        version: 1,
+        label: "estimate",
+        currency: "USD",
+        llm_calls: saved.llm_calls,
+        tokens_in: saved.tokens_in,
+        tokens_out: saved.tokens_out,
+        estimated_usd: saved.estimated_usd,
+        ...(source ? { source } : {}),
+      };
     }
   } catch {
-    /* offline admin stays honest */
+    /* offline admin stays honest — no invented tokens or USD */
   }
   return null;
 }
@@ -133,8 +148,8 @@ export default function AdminPage() {
             <strong>{metrics.high.toString().padStart(2, "0")}</strong>
             <em>ainda abertas</em>
           </article>
-          <article className="admin-kpi">
-            <span className="admin-kpi-label"><Activity size={14} /> Custo LLM</span>
+          <article className="admin-kpi" data-kpi="llm-cost">
+            <span className="admin-kpi-label"><CircleDollarSign size={14} /> Custo LLM</span>
             {usage ? (
               <>
                 <strong>USD {usage.estimated_usd.toFixed(4)}</strong>
@@ -145,8 +160,8 @@ export default function AdminPage() {
               </>
             ) : (
               <>
-                <strong>—</strong>
-                <em>sem dados · importe mola.usage.v1 da API /usage</em>
+                <strong aria-label="Sem dados de custo">—</strong>
+                <em>sem dados · snapshot rotulado mola.usage.v1</em>
               </>
             )}
           </article>
