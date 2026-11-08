@@ -105,6 +105,36 @@ export async function createCase(
     }),
   ).case;
 }
+export async function advanceCase(
+  config: ConnectionConfig,
+  id: string,
+  body: { to_state?: Run["state"]; reason?: string } = {},
+): Promise<{ case: Run; from_state: Run["state"] | null }> {
+  const payload = z
+    .object({
+      case: caseSchema,
+      event: z
+        .object({
+          from_state: caseSchema.shape.state.nullable().optional(),
+          to_state: caseSchema.shape.state.nullable().optional(),
+        })
+        .passthrough()
+        .nullable()
+        .optional(),
+    })
+    .parse(
+      await request(
+        config,
+        `/api/cases/${encodeURIComponent(id)}/advance`,
+        undefined,
+        { method: "POST", body: JSON.stringify(body) },
+      ),
+    );
+  return {
+    case: payload.case,
+    from_state: payload.event?.from_state ?? null,
+  };
+}
 export function parseStream(data: string) {
   return eventSchema.parse(JSON.parse(data));
 }

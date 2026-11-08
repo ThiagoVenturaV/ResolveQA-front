@@ -27,6 +27,7 @@ import {
 } from "@/lib/resolveqa/demo";
 import {
   apiUrl,
+  advanceCase,
   createCase,
   deleteRemotePlaybook,
   fetchCase,
@@ -63,6 +64,8 @@ type Runtime = {
     repo_ref: string;
     report_text: string;
   }) => Promise<void>;
+  moveCase: (id: string, state: Run["state"]) => Promise<void>;
+  /** @deprecated use moveCase — kept for older demo call sites during rename */
   moveDemo: (id: string, state: Run["state"]) => void;
   savePlaybook: (p: Playbook) => Promise<void>;
   removePlaybook: (id: string) => Promise<void>;
@@ -100,11 +103,18 @@ export function RuntimeProvider({
     playbooks: Playbook[];
   } | null>(null);
   const modeRef = useRef(mode);
+  const configRef = useRef(config);
   const generation = useRef(0);
   const commit = useCallback((s: Snapshot) => {
     current.current = s;
     setSnapshot(s);
   }, []);
+  useEffect(() => {
+    modeRef.current = mode;
+  }, [mode]);
+  useEffect(() => {
+    configRef.current = config;
+  }, [config]);
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -352,21 +362,78 @@ export function RuntimeProvider({
     };
   }, [mode, ready, config, revision, commit, ingest]);
 
-  const step = useCallback(() => {
-    if (modeRef.current !== "demo") return;
-    const next = nextDemoEvent(current.current);
-    if (next.run)
+  const applyRemoteAdvance = useCallback(
+    (before: Run, updated: Run, fromState: Run["state"] | null) => {
+      const from = fromState ?? before.state;
+      const ev = eventSchema.parse({
+        event_id: crypto.randomUUID(),
+        case_id: updated.case_id,
+        seq:
+          Math.max(
+            0,
+            ...current.current.events
+              .filter((e) => e.case_id === updated.case_id)
+              .map((e) => e.seq),
+          ) + 1,
+        ts: updated.updated_at,
+        source: "orchestrator",
+        type: "StateChanged",
+        from_state: from,
+        to_state: updated.state,
+        reason:
+          "Avanço manual pelo Quadro; sincronizado no armazenamento do backend.",
+        evidence_refs: [],
+      });
       commit({
         ...current.current,
-        cases: [next.run, ...current.current.cases],
+        cases: [
+          ...current.current.cases.filter((c) => c.case_id !== updated.case_id),
+          updated,
+        ],
       });
-    ingest(next.event);
-  }, [commit, ingest]);
+      ingest(ev);
+    },
+    [commit, ingest],
+  );
+  const step = useCallback(() => {
+    if (modeRef.current === "demo") {
+      const next = nextDemoEvent(current.current);
+      if (next.run)
+        commit({
+          ...current.current,
+          cases: [next.run, ...current.current.cases],
+        });
+      ingest(next.event);
+      return;
+    }
+    const run = current.current.cases.find(
+      (c) =>
+        c.state !== "verified" &&
+        c.state !== "needs_info" &&
+        c.state !== "blocked" &&
+        c.state !== "infra_error",
+    );
+    if (!run) return;
+    void (async () => {
+      try {
+        setError("");
+        const { case: updated, from_state } = await advanceCase(
+          configRef.current ?? config,
+          run.case_id,
+        );
+        applyRemoteAdvance(run, updated, from_state);
+        setConnection("Caso avançado no backend");
+        setLastSync(new Date().toLocaleTimeString("pt-BR"));
+      } catch (e) {
+        setError(friendlyError(e));
+      }
+    })();
+  }, [applyRemoteAdvance, commit, config, ingest]);
   useEffect(() => {
-    if (!playing || mode !== "demo") return;
+    if (!playing) return;
     const t = setInterval(step, 5500);
     return () => clearInterval(t);
-  }, [playing, mode, step]);
+  }, [playing, step]);
   const addCase = async (report: {
     client_id: string;
     repo_ref: string;
@@ -471,30 +538,85 @@ export function RuntimeProvider({
         addCase,
         savePlaybook,
         removePlaybook,
-        moveDemo: (id, state) => {
-          if (mode !== "demo") return;
+        moveCase: async (id, state) => {
           const run = current.current.cases.find((c) => c.case_id === id);
           if (!run || run.state === state) return;
-          const ev = eventSchema.parse({
-            event_id: crypto.randomUUID(),
-            case_id: id,
-            seq:
-              Math.max(
-                0,
-                ...current.current.events
-                  .filter((e) => e.case_id === id)
-                  .map((e) => e.seq),
-              ) + 1,
-            ts: new Date().toISOString(),
-            source: "orchestrator",
-            type: "StateChanged",
-            from_state: run.state,
-            to_state: state,
-            reason:
-              "Movimento manual de demonstração; não constitui verificação real.",
-            evidence_refs: [],
-          });
-          ingest(ev);
+          if (mode === "demo") {
+            const ev = eventSchema.parse({
+              event_id: crypto.randomUUID(),
+              case_id: id,
+              seq:
+                Math.max(
+                  0,
+                  ...current.current.events
+                    .filter((e) => e.case_id === id)
+                    .map((e) => e.seq),
+                ) + 1,
+              ts: new Date().toISOString(),
+              source: "orchestrator",
+              type: "StateChanged",
+              from_state: run.state,
+              to_state: state,
+              reason:
+                "Movimento manual de demonstração; não constitui verificação real.",
+              evidence_refs: [],
+            });
+            ingest(ev);
+            return;
+          }
+          try {
+            setError("");
+            const { case: updated, from_state } = await advanceCase(
+              configRef.current,
+              id,
+              { to_state: state },
+            );
+            applyRemoteAdvance(run, updated, from_state);
+            setConnection("Caso atualizado no backend");
+            setLastSync(new Date().toLocaleTimeString("pt-BR"));
+          } catch (e) {
+            setError(friendlyError(e));
+          }
+        },
+        moveDemo: (id, state) => {
+          void (async () => {
+            const run = current.current.cases.find((c) => c.case_id === id);
+            if (!run || run.state === state) return;
+            if (modeRef.current === "demo") {
+              const ev = eventSchema.parse({
+                event_id: crypto.randomUUID(),
+                case_id: id,
+                seq:
+                  Math.max(
+                    0,
+                    ...current.current.events
+                      .filter((e) => e.case_id === id)
+                      .map((e) => e.seq),
+                  ) + 1,
+                ts: new Date().toISOString(),
+                source: "orchestrator",
+                type: "StateChanged",
+                from_state: run.state,
+                to_state: state,
+                reason:
+                  "Movimento manual de demonstração; não constitui verificação real.",
+                evidence_refs: [],
+              });
+              ingest(ev);
+              return;
+            }
+            try {
+              setError("");
+              const { case: updated, from_state } = await advanceCase(
+                configRef.current,
+                id,
+                { to_state: state },
+              );
+              applyRemoteAdvance(run, updated, from_state);
+            } catch (e) {
+              setError(friendlyError(e));
+            }
+          })();
         },
       }}
     >
