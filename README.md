@@ -1,5 +1,9 @@
 # ResolveQA · Mola e Admin
 
+Repositório público do frontend: https://github.com/ThiagoVenturaV/ResolveQA-front
+
+Backend / cloud: https://github.com/moouraajv/ResolveQA
+
 Workspace para acompanhar a resolução de bugs por agentes: relato, reprodução, correção e verificação independente, com evidências, referências de documentação e playbooks por empresa.
 
 - `/`: landing baseada na primeira referência aprovada, com acessos diretos aos dois ambientes.
