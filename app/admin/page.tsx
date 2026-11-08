@@ -9,9 +9,40 @@ type Status = "todo" | "doing" | "done";
 type Agent = "Codex" | "cursor" | "Antigravity";
 type Task = { id: string; title: string; status: Status; agent: Agent; priority: "Alta" | "Normal" };
 type Event = { id: string; text: string; time: string };
+type UsageSnapshot = {
+  version: 1;
+  label: "estimate";
+  currency: "USD";
+  llm_calls: number;
+  tokens_in: number;
+  tokens_out: number;
+  estimated_usd: number;
+  source?: string;
+};
 
 const KEY = "mola.workspace.v1";
+const USAGE_KEY = "mola.usage.v1";
 const agents: Agent[] = ["Codex", "cursor", "Antigravity"];
+
+function readUsageSnapshot(): UsageSnapshot | null {
+  try {
+    const saved = JSON.parse(localStorage.getItem(USAGE_KEY) || "null");
+    if (
+      saved?.version === 1 &&
+      saved?.currency === "USD" &&
+      saved?.label === "estimate" &&
+      typeof saved.llm_calls === "number" &&
+      typeof saved.tokens_in === "number" &&
+      typeof saved.tokens_out === "number" &&
+      typeof saved.estimated_usd === "number"
+    ) {
+      return saved as UsageSnapshot;
+    }
+  } catch {
+    /* offline admin stays honest */
+  }
+  return null;
+}
 
 const fallbackTasks: Task[] = [
   { id: "MOL-004", title: "Dar vida aos pequenos detalhes", status: "todo", agent: "cursor", priority: "Normal" },
@@ -26,6 +57,7 @@ export default function AdminPage() {
   const [tasks, setTasks] = useState<Task[]>(fallbackTasks);
   const [events, setEvents] = useState<Event[]>([]);
   const [source, setSource] = useState("Exemplo local");
+  const [usage, setUsage] = useState<UsageSnapshot | null>(null);
 
   useEffect(() => {
     try {
@@ -42,6 +74,7 @@ export default function AdminPage() {
         if (typeof saved.source === "string") setSource(saved.source.slice(0, 160));
       }
     } catch { /* demo admin still works offline */ }
+    setUsage(readUsageSnapshot());
   }, []);
 
   const metrics = useMemo(() => {
@@ -99,6 +132,23 @@ export default function AdminPage() {
             <span className="admin-kpi-label"><Users size={14} /> Prioridade alta</span>
             <strong>{metrics.high.toString().padStart(2, "0")}</strong>
             <em>ainda abertas</em>
+          </article>
+          <article className="admin-kpi">
+            <span className="admin-kpi-label"><Activity size={14} /> Custo LLM</span>
+            {usage ? (
+              <>
+                <strong>USD {usage.estimated_usd.toFixed(4)}</strong>
+                <em>
+                  estimate · {usage.llm_calls} calls · {usage.tokens_in}/{usage.tokens_out} tok
+                  {usage.source ? ` · ${usage.source}` : ""}
+                </em>
+              </>
+            ) : (
+              <>
+                <strong>—</strong>
+                <em>sem dados · importe mola.usage.v1 da API /usage</em>
+              </>
+            )}
           </article>
         </section>
 
