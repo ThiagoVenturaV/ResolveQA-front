@@ -70,7 +70,7 @@ export function MolaSprite({
     img.onload = () => { if (!cancelled) setAtlasReady(true); };
     img.onerror = () => { if (!cancelled) setAtlasReady(false); };
     img.src = ATLAS_SRC;
-    if (img.complete && img.naturalWidth > 0) setAtlasReady(true);
+    if (img.complete && img.naturalWidth > 0) queueMicrotask(() => { if (!cancelled) setAtlasReady(true); });
     return () => { cancelled = true; };
   }, []);
 
@@ -83,6 +83,7 @@ export function MolaSprite({
         backgroundSize: backgroundSize(width, height),
         backgroundPosition: backgroundPosition(activeClip, safeFrame, width, height),
         imageRendering: "pixelated",
+        position: "relative",
         filter: hue === 0 ? undefined : `hue-rotate(${hue}deg)`,
         ...style,
       }
@@ -102,6 +103,8 @@ export function MolaSprite({
       aria-label={ariaLabel ?? `Mola arco-íris ${palette.name}`}
       style={spriteStyle}
     >
+      <canvas className="mola-slinky" width={224} height={272} hidden aria-hidden="true"
+        style={{ position: "absolute", left: "-8.333333%", top: "-30.769231%", width: "116.666667%", height: "130.769231%", pointerEvents: "none" }} />
       {!atlasReady && showPlaceholder ? <span className="mola-atlas-pending" aria-hidden="true" /> : null}
     </div>
   );

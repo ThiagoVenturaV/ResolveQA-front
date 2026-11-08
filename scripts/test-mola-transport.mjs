@@ -8,7 +8,7 @@ import { pathToFileURL } from 'node:url';
 // Resolve the app's extensionless TS imports without adding a test dependency.
 const dir = await mkdtemp(join(tmpdir(), 'mola-test-'));
 try {
-  for (const name of ['atlas', 'physics', 'transport']) {
+  for (const name of ['atlas', 'physics', 'transport', 'slinky']) {
     const source = await readFile(new URL(`../components/mola/${name}.ts`, import.meta.url), 'utf8');
     await writeFile(join(dir, `${name}.ts`), source.replace(/from "\.\/(atlas|physics)"/g, 'from "./$1.ts"'));
   }
@@ -20,6 +20,12 @@ try {
     const a = samplePath(wp, phases[i - 1], 1), b = samplePath(wp, phases[i], 0);
     assert.ok(Math.hypot(a.x - b.x, a.y - b.y) < 1e-9, `continuous ${phases[i]}`);
   }
+  const { slinkyFrame, SLINKY_SHEET } = await import(pathToFileURL(join(dir, 'slinky.ts')));
+  assert.equal(SLINKY_SHEET.count, 8);
+  for (let i = 0; i < 8; i++) assert.equal(slinkyFrame(i / 8), i, 'all eight drawn poses selected');
+  assert.equal(slinkyFrame(1), 0, 'loop returns to first pose');
+  assert.equal(slinkyFrame(-0.125), 7, 'reverse wrapping');
+  assert.equal(slinkyFrame(0.124), 0, 'pose held until next frame');
   let queue = new Map(), serial = 0;
   globalThis.requestAnimationFrame = cb => { queue.set(++serial, cb); return serial; };
   globalThis.cancelAnimationFrame = id => queue.delete(id);

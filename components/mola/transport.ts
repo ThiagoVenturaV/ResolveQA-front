@@ -8,6 +8,7 @@ export type TransportSnapshot = {
   x: number;
   y: number;
   clipFrame: number;
+  slinkyCycle?: number;
   facing?: 1 | -1;
   local?: number;
   state?: "IDLE" | "SEEKING_TASK" | "PICKING_TASK" | "CARRYING_TASK" | "DELIVERING_TASK" | "RETURNING";
@@ -188,7 +189,7 @@ export function runTransport(opts: TransportOptions) {
       clipClock = 0;
     }
     const clip = TRANSPORT_CLIP[phase];
-    const walking = phase === "seek" || phase === "carry" || phase === "return";
+    const walking = phase === "carry";
     const fps = walking ? 10 : CLIPS[clip].fps;
     while (clipClock >= 1 / fps) {
       clipClock -= 1 / fps;
@@ -199,6 +200,7 @@ export function runTransport(opts: TransportOptions) {
     emit({
       phase,
       local,
+      slinkyCycle: local, // Eight distinct poses over the 0.8-second unloaded leg.
       state: phase === "seek" ? "SEEKING_TASK" : phase === "carry" ? "CARRYING_TASK" : phase === "return" ? "RETURNING" : phase === "idle" ? "IDLE" : phase === "compress" || phase === "reach" ? "PICKING_TASK" : "DELIVERING_TASK",
       facing: (phase === "seek" ? from.x - wp.home.x : phase === "return" ? wp.home.x - to.x : to.x - from.x) < 0 ? -1 : 1,
       x: pos.x,

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Hand, Pause, Play, Sparkles } from "lucide-react";
 import { ATLAS, CLIPS, groundAt, type ClipName } from "./atlas";
 import { approach, clamp, limitDelta, prefersReducedMotion, spring1d } from "./physics";
+import { paintSlinky } from "./slinky";
 import { MolaSprite } from "./spring";
 
 type Mode = "idle" | "move" | "wave" | "jump" | "wait" | "fail" | "drag" | "return";
@@ -55,6 +56,8 @@ export function HeroStage({ skin }: HeroStageProps) {
     clip: "idle" as ClipName,
     frame: 0,
     clipClock: 0,
+    slinkyCycle: 0,
+    slinkyStrength: 0,
     /** Active seconds in current mode (pauses do not advance — avoids teleport on resume). */
     modeActive: 0,
     target: null as number | null,
@@ -137,6 +140,8 @@ export function HeroStage({ skin }: HeroStageProps) {
         sprite.style.backgroundPosition = `${-col * w}px ${-row * h}px`;
         sprite.dataset.frame = String(frame);
         sprite.dataset.clip = s.clip;
+        const elastic = ["idle", "move", "wait", "return"].includes(s.mode);
+        paintSlinky(sprite, elastic ? { cycle: s.slinkyCycle, strength: s.reduced ? 0 : s.slinkyStrength, facing: s.facing } : null);
       }
     };
 
@@ -156,7 +161,7 @@ export function HeroStage({ skin }: HeroStageProps) {
     };
 
     const pickLocomotion = () => {
-      s.clip = s.facing > 0 ? "runRight" : "runLeft";
+      s.clip = "idle"; // Unloaded locomotion is painted as an elastic Slinky.
     };
 
     /** Cadence scales with speed: walk ~6fps … run ~12fps (same atlas rows). */
@@ -295,6 +300,9 @@ export function HeroStage({ skin }: HeroStageProps) {
           s.frame = (s.frame + 1) % def.count;
         }
       }
+      // Integrate the unloaded gait with the existing RAF and speed controller.
+      s.slinkyCycle += dt * 1.25;
+      s.slinkyStrength = approach(s.slinkyStrength, s.mode === "move" ? 1 : 0.45, dt * 5);
       paint();
     };
 
