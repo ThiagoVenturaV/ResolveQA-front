@@ -107,27 +107,23 @@ jobs:
           case_code=$(curl -sS -o /tmp/seed-case.json -w '%{http_code}' \
             -H "Origin: $url" "$api/api/cases/$first_id")
           test "$case_code" = "200"
-          # Static export may inline the API base / case id only inside JS chunks.
-          curl -sS "$url" -o /tmp/front-index.html
-          found=0
-          if grep -F "$api" /tmp/front-index.html /tmp/front-admin.html >/dev/null; then
-            found=1
-          else
+          # Export inlines connection settings in HTML (and sometimes JS chunks).
+          mkdir -p /tmp/front-assets
+          curl -sS "$url/" -o /tmp/front-assets/index.html
+          curl -sS "$url/admin" -o /tmp/front-assets/admin.html
+          curl -sS "$url/quadro" -o /tmp/front-assets/quadro.html
+          contains() {
+            local needle="$1"
+            if grep -RF -- "$needle" /tmp/front-assets >/dev/null; then
+              return 0
+            fi
             while IFS= read -r s; do
-              curl -sS "$url$s" -o /tmp/chunk.js
-              if grep -F "$api" /tmp/chunk.js >/dev/null; then
-                found=1
-                break
+              curl -sS "$url$s" -o /tmp/front-assets/chunk.js
+              if grep -F -- "$needle" /tmp/front-assets/chunk.js >/dev/null; then
+                return 0
               fi
-            done < <(grep -oE '/_next/static/[^"]+\.js' /tmp/front-index.html | head -20)
-          fi
-          test "$found" = "1"
-          grep -F "$first_id" /tmp/front-index.html /tmp/front-admin.html /tmp/chunk.js >/dev/null \
-            || {
-              while IFS= read -r s; do
-                curl -sS "$url$s" -o /tmp/chunk2.js
-                if grep -F "$first_id" /tmp/chunk2.js >/dev/null; then exit 0; fi
-              done < <(grep -oE '/_next/static/[^"]+\.js' /tmp/front-index.html | head -30)
-              echo "Seeded case id not found in exported assets." >&2
-              exit 1
-            }
+            done < <(grep -ohE '/_next/static/[^"]+\.js' /tmp/front-assets/*.html | sort -u | head -30)
+            return 1
+          }
+          contains "$api"
+          contains "$first_id"
