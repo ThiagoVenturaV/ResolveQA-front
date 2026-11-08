@@ -29,12 +29,27 @@ jobs:
       - name: Install
         run: npm ci
 
+      # TEMPORARY FOR PITCH DEMO — remove this entire step after the presentation.
+      # Backend storage is ephemeral; re-seed on every deploy so Quadro has cards.
+      # See scripts/seed-backend-cases.mjs DELETE checklist.
+      - name: Seed backend cases (TEMPORARY — remove after pitch)
+        env:
+          RESOLVEQA_API_URL: ${{ vars.RESOLVEQA_API_URL }}
+          RESOLVEQA_FRONT_ORIGIN: ${{ vars.RESOLVEQA_FRONT_ORIGIN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${RESOLVEQA_API_URL:-}" ]; then
+            echo "Missing repository variable RESOLVEQA_API_URL (public backend base URL)." >&2
+            exit 1
+          fi
+          node scripts/seed-backend-cases.mjs
+
       - name: Build AWS export
         env:
           # Bake public connection settings into the static export.
+          # RESOLVEQA_CASE_IDS is inherited from GITHUB_ENV (pitch seed step).
           RESOLVEQA_MODE: production
           RESOLVEQA_API_URL: ${{ vars.RESOLVEQA_API_URL }}
-          RESOLVEQA_CASE_IDS: ${{ vars.RESOLVEQA_CASE_IDS }}
           RESOLVEQA_SNAPSHOT_PATH: ${{ vars.RESOLVEQA_SNAPSHOT_PATH }}
           RESOLVEQA_EVENTS_PATH: ${{ vars.RESOLVEQA_EVENTS_PATH }}
           RESOLVEQA_PLAYBOOKS_PATH: ${{ vars.RESOLVEQA_PLAYBOOKS_PATH }}
@@ -44,6 +59,16 @@ jobs:
             echo "Missing repository variable RESOLVEQA_API_URL (public backend base URL)." >&2
             exit 1
           fi
+          # Fallback only if the temporary pitch seed step was already removed.
+          if [ -z "${RESOLVEQA_CASE_IDS:-}" ]; then
+            RESOLVEQA_CASE_IDS='${{ vars.RESOLVEQA_CASE_IDS }}'
+            export RESOLVEQA_CASE_IDS
+          fi
+          if [ -z "${RESOLVEQA_CASE_IDS:-}" ]; then
+            echo "Missing RESOLVEQA_CASE_IDS (pitch seed should have set GITHUB_ENV)." >&2
+            exit 1
+          fi
+          echo "Baking $(printf '%s' "$RESOLVEQA_CASE_IDS" | tr ',' '\n' | grep -c . || true) case id(s) into the export."
           npm run build:aws
 
       - name: Configure AWS credentials (OIDC)
@@ -64,6 +89,10 @@ jobs:
           RESOLVEQA_API_URL: ${{ vars.RESOLVEQA_API_URL }}
         run: |
           set -euo pipefail
+          if [ -z "${RESOLVEQA_CASE_IDS:-}" ]; then
+            RESOLVEQA_CASE_IDS='${{ vars.RESOLVEQA_CASE_IDS }}'
+            export RESOLVEQA_CASE_IDS
+          fi
           url=$(aws cloudformation describe-stacks --stack-name "$STACK" \
             --query "Stacks[0].Outputs[?OutputKey=='SiteUrl'].OutputValue | [0]" --output text)
           echo "SiteUrl=$url"
@@ -74,7 +103,11 @@ jobs:
           api="${RESOLVEQA_API_URL%/}"
           health=$(curl -sS -o /tmp/back-health.json -w '%{http_code}' "$api/health")
           test "$health" = "200"
-          # Static export may inline the API base only inside JS chunks.
+          first_id=$(printf '%s' "$RESOLVEQA_CASE_IDS" | cut -d, -f1)
+          case_code=$(curl -sS -o /tmp/seed-case.json -w '%{http_code}' \
+            -H "Origin: $url" "$api/api/cases/$first_id")
+          test "$case_code" = "200"
+          # Static export may inline the API base / case id only inside JS chunks.
           curl -sS "$url" -o /tmp/front-index.html
           found=0
           if grep -F "$api" /tmp/front-index.html /tmp/front-admin.html >/dev/null; then
@@ -89,3 +122,12 @@ jobs:
             done < <(grep -oE '/_next/static/[^"]+\.js' /tmp/front-index.html | head -20)
           fi
           test "$found" = "1"
+          grep -F "$first_id" /tmp/front-index.html /tmp/front-admin.html /tmp/chunk.js >/dev/null \
+            || {
+              while IFS= read -r s; do
+                curl -sS "$url$s" -o /tmp/chunk2.js
+                if grep -F "$first_id" /tmp/chunk2.js >/dev/null; then exit 0; fi
+              done < <(grep -oE '/_next/static/[^"]+\.js' /tmp/front-index.html | head -30)
+              echo "Seeded case id not found in exported assets." >&2
+              exit 1
+            }

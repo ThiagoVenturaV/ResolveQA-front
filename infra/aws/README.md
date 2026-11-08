@@ -38,6 +38,17 @@ For a new release, build the intended commit and run the same deploy command. Fo
 
 Push (or merge) to `main` runs `.github/workflows/deploy-aws.yml` and deploys this stack automatically via GitHub OIDC (`AWS_ROLE_ARN`). Merge remains manual. `workflow_dispatch` allows a manual re-deploy from Actions.
 
+### TEMPORARY pitch seed (remove after the presentation)
+
+The deploy workflow currently **re-seeds demo cases on the ephemeral backend** before `build:aws`, then bakes the new `RESOLVEQA_CASE_IDS` into the static export so Quadro shows cards. This is only for the pitch: the backend has no durable storage.
+
+After the pitch, delete:
+
+1. The `Seed backend cases (TEMPORARY — remove after pitch)` step in `.github/workflows/deploy-aws.yml`
+2. `scripts/seed-backend-cases.mjs`
+3. This subsection
+4. Any pitch-only `RESOLVEQA_CASE_IDS` repository variable value
+
 Required repository configuration:
 
 | Kind | Name | Purpose |
@@ -47,5 +58,5 @@ Required repository configuration:
 | secret | `AWS_STACK_NAME` | CloudFormation stack (`resolveqa-frontend`) |
 | variable | `RESOLVEQA_API_URL` | Public backend HTTPS base baked into the export |
 
-Optional variables: `RESOLVEQA_CASE_IDS`, `RESOLVEQA_SNAPSHOT_PATH`, `RESOLVEQA_EVENTS_PATH`, `RESOLVEQA_PLAYBOOKS_PATH`.
+Optional variables: `RESOLVEQA_FRONT_ORIGIN` (CORS `Origin` for seed; defaults to the public front), `RESOLVEQA_CASE_IDS` (fallback if the pitch seed step is removed), `RESOLVEQA_SNAPSHOT_PATH`, `RESOLVEQA_EVENTS_PATH`, `RESOLVEQA_PLAYBOOKS_PATH`.
 
