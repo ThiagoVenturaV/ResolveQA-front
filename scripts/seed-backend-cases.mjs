@@ -1,12 +1,22 @@
 #!/usr/bin/env node
 /**
- * Seed ResolveQA cases on a live/local backend so the production front
- * can poll them via RESOLVEQA_CASE_IDS.
+ * TEMPORARY FOR PITCH DEMO — remove after the presentation.
+ *
+ * Seeds ResolveQA cases on a live/local backend so the production front can
+ * poll them via RESOLVEQA_CASE_IDS. The demo backend is ephemeral: cases die
+ * on reboot, which is why CI re-seeds on every deploy while this stays in.
+ *
+ * DELETE checklist (post-pitch):
+ * 1. Remove the "Seed backend cases" step from .github/workflows/deploy-aws.yml
+ * 2. Delete this file (scripts/seed-backend-cases.mjs)
+ * 3. Drop the pitch-seed notes from infra/aws/README.md
+ * 4. Clear repository variable RESOLVEQA_CASE_IDS if it only held pitch IDs
  *
  * Usage:
  *   RESOLVEQA_API_URL=https://d2f79ulrlhg51j.cloudfront.net node scripts/seed-backend-cases.mjs
  *
- * Prints CASE_IDS=... for copy into repo variables / .env.local.
+ * Prints CASE_IDS=id1,id2,... (machine-readable) and optionally appends to
+ * $GITHUB_ENV when running inside GitHub Actions.
  */
 const api = (process.env.RESOLVEQA_API_URL || "").replace(/\/$/, "");
 const origin =
@@ -17,6 +27,10 @@ if (!api) {
   console.error("RESOLVEQA_API_URL is required");
   process.exit(1);
 }
+
+console.log(
+  "TEMPORARY pitch seed: creating demo cases on the ephemeral backend.",
+);
 
 const reports = [
   ["Acme Commerce", "acme/checkout", "Cupom de 10% não altera o total da compra"],
@@ -55,7 +69,32 @@ for (const [client_id, repo_ref, report_text] of reports) {
   console.log(`${id}\t${payload.case.state}\t${report_text}`);
 }
 
-console.log(`CASE_IDS=${ids.join(",")}`);
-console.log(
-  "Set repository variable RESOLVEQA_CASE_IDS (or .env.local) then rebuild/redeploy the front.",
-);
+const joined = ids.join(",");
+console.log(`CASE_IDS=${joined}`);
+
+if (process.env.GITHUB_ENV) {
+  const { appendFileSync } = await import("node:fs");
+  appendFileSync(
+    process.env.GITHUB_ENV,
+    `RESOLVEQA_CASE_IDS=${joined}\n`,
+    "utf8",
+  );
+  console.log("Wrote RESOLVEQA_CASE_IDS to GITHUB_ENV for this deploy job.");
+}
+
+if (process.env.GITHUB_STEP_SUMMARY) {
+  const { appendFileSync } = await import("node:fs");
+  appendFileSync(
+    process.env.GITHUB_STEP_SUMMARY,
+    [
+      "## TEMPORARY pitch seed",
+      "",
+      "Demo cases were created on the ephemeral backend and baked into this front export.",
+      "**Remove this seed step after the pitch presentation.**",
+      "",
+      `\`${ids.length}\` case ids seeded.`,
+      "",
+    ].join("\n"),
+    "utf8",
+  );
+}
