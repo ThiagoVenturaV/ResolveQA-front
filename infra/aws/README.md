@@ -3,6 +3,9 @@
 The Mola frontend exports to static HTML/JS. This deployment serves the current demo and browser-local Kanban data; it does not publish a backend API.
 
 ```sh
+# Public backend base URL is baked into the static export at build time.
+export RESOLVEQA_API_URL=https://d2f79ulrlhg51j.cloudfront.net
+export RESOLVEQA_MODE=production
 npm run build:aws
 # Optional: export AWS_PROFILE and AWS_REGION, or rely on the default credential chain.
 # Quiet STS check (no Account/Arn printed):
@@ -34,4 +37,15 @@ For a new release, build the intended commit and run the same deploy command. Fo
 ## CI/CD
 
 Push (or merge) to `main` runs `.github/workflows/deploy-aws.yml` and deploys this stack automatically via GitHub OIDC (`AWS_ROLE_ARN`). Merge remains manual. `workflow_dispatch` allows a manual re-deploy from Actions.
+
+Required repository configuration:
+
+| Kind | Name | Purpose |
+|---|---|---|
+| secret | `AWS_ROLE_ARN` | IAM role trusted for this repo via GitHub OIDC |
+| secret | `AWS_REGION` | Deploy region (e.g. `us-east-1`) |
+| secret | `AWS_STACK_NAME` | CloudFormation stack (`resolveqa-frontend`) |
+| variable | `RESOLVEQA_API_URL` | Public backend HTTPS base baked into the export |
+
+Optional variables: `RESOLVEQA_CASE_IDS`, `RESOLVEQA_SNAPSHOT_PATH`, `RESOLVEQA_EVENTS_PATH`, `RESOLVEQA_PLAYBOOKS_PATH`.
 
