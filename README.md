@@ -35,7 +35,7 @@ npm run start
 - Uma mola arco-íris, com seis opções de matiz da mesma arte.
 - Avanço manual, reprodução automática pausável e arrastar/soltar cards.
 - Criação de tarefas, filtro por agente, detalhes e registro de eventos.
-- Estado salvo no navegador, importação e exportação de snapshots JSON.
+- Estado de demonstração salvo no navegador e exportação JSON dos logs filtrados.
 - Layout responsivo, navegação por teclado e redução de movimento conforme a preferência do sistema.
 - Pranchas e estudos anteriores preservados no repositório como histórico de arte.
 
@@ -61,7 +61,9 @@ npm run test:stream
 
 ## Direção visual
 
-A referência de movimento é a landing da [Keytotwo](https://keytotwo.com.br/). A identidade da Mola, as pranchas e o atlas foram gerados para este projeto.
+A interface usa a primeira referência aprovada: entrada clara com Mola e Admin em equilíbrio. O painel administrativo usa preto e cinzas neutros, conforme a correção do usuário. Tokens e componentes em [DESIGN.md](DESIGN.md).
+
+Os estudos abaixo são históricos da identidade e do movimento da Mola, preservados junto com o atlas e as novas poses da main.
 
 | Prancha | Explorações |
 | --- | --- |
@@ -83,7 +85,7 @@ O personagem usa um atlas gerado por estado, baseado no desenho da primeira pran
 - `app/globals.css`: composição, responsividade e movimento.
 - `components/mola/`: atlas, física, palco interativo e transporte.
 - `public/moodboards/`: pranchas PNG em resolução original.
-- [Contrato de snapshot](docs/snapshots.md): formato de intercâmbio local.
+- [Contrato de snapshot histórico](docs/snapshots.md): referência anterior; o contrato atual de produção está em docs/production-connection.md.
 - [Direção visual](docs/art-direction.md): decisões e contexto.
 
 Implementado com React, TypeScript e Vinext/Vite. O starter inclui a configuração de publicação privada pelo Sites; não há credenciais de GitHub no cliente.

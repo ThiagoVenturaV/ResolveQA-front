@@ -3619,3 +3619,92 @@ tr:hover td {
     font-size: 9px;
   }
 }
+
+/* Compact the preview cards to the approved information rhythm. */
+@media (min-width: 901px) {
+  .preview-hero .preview-task {
+    font-size: 11px;
+    line-height: 1.2;
+    padding: 8px 9px;
+  }
+  .preview-hero .preview-task > p {
+    margin: 4px 0 7px;
+    line-height: 1.3;
+    min-height: 34px;
+  }
+  .preview-hero .preview-event {
+    padding-block: 3px;
+  }
+  .preview-hero .preview-lanes {
+    min-height: 238px;
+  }
+  .rq-gateways {
+    margin-top: 20px;
+  }
+  .rq-gateways .preview-task {
+    font-size: 11px;
+    line-height: 1.25;
+    padding: 8px;
+  }
+  .rq-gateways .preview-task > p {
+    margin: 4px 0 7px;
+    line-height: 1.4;
+  }
+  .rq-hero .rq-button {
+    font-size: 19px;
+  }
+}
+@media (min-width: 901px) and (max-width: 1180px) {
+  .rq-hero .rq-button {
+    font-size: 12px;
+  }
+  .preview-hero .preview-task {
+    font-size: 9px;
+  }
+  .preview-hero .preview-task > p {
+    min-height: 28px;
+  }
+}
+
+@media (min-width: 901px) {
+  .rq-hero-copy > p {
+    margin-bottom: 30px;
+  }
+  .rq-hero .rq-actions {
+    margin-left: 4px;
+  }
+  .rq-hero .rq-button {
+    height: 53px;
+    min-height: 53px;
+    font-weight: 600;
+  }
+  .rq-hero .rq-button.primary {
+    background: #c34b1c;
+    border-color: #b13a16;
+  }
+  .rq-hero .rq-button:not(.primary) {
+    border-color: #969492;
+    color: #0c0b0b;
+    font-weight: 700;
+  }
+  .rq-hero .rq-button > svg:last-child {
+    width: 21px;
+    height: 21px;
+  }
+  .rq-hero .rq-button > svg:first-child {
+    width: 22px;
+    height: 22px;
+  }
+}
+@media (min-width: 1450px) {
+  .rq-hero .rq-actions {
+    grid-template-columns: 230px 261px;
+  }
+}
+
+/* Dark Admin action surfaces keep white labels readable. */
+.rq-admin-app .rq-button.primary {
+  background: #b84e2e;
+  border-color: #b84e2e;
+  color: #fff8ef;
+}

@@ -24,8 +24,8 @@ export default function LandingPage() {
         <section className="rq-hero">
           <div className="rq-hero-copy">
             <h1>
-              <span className="hero-line">Do relato à</span>
-              <span className="hero-line">correção.</span>
+              <span className="hero-line">Do relato à</span>{" "}
+              <span className="hero-line">correção.</span>{" "}
               <span className="hero-line">Com evidências.</span>
             </h1>
             <p>

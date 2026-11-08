@@ -27,6 +27,10 @@ async function check(name, fn) {
 }
 const base = process.env.RESOLVEQA_BASE_URL || "http://127.0.0.1:5173";
 async function settle() {
+  await page.waitForFunction(() => {
+    const heading = document.querySelector(".hero-line");
+    return !heading || getComputedStyle(heading).display === "block";
+  });
   await page.evaluate(() => document.fonts.ready);
   await page.waitForFunction(() =>
     [...document.querySelectorAll(".mola-sprite")].every(
@@ -69,6 +73,39 @@ await page.screenshot({ path: `${out}/admin-desktop.png`, fullPage: true });
 await check("Admin abre painel com execuções", async () =>
   assert.equal(await page.locator(".metric-strip").count(), 1),
 );
+await check("Admin preto com contraste legível", async () => {
+  const colors = await page.locator(".rq-admin-app").evaluate((el) => ({
+    background: getComputedStyle(el).backgroundColor.match(/\d+/g).map(Number),
+    foreground: getComputedStyle(el.querySelector("h1"))
+      .color.match(/\d+/g)
+      .map(Number),
+    buttonBackground: getComputedStyle(el.querySelector(".rq-button.primary"))
+      .backgroundColor.match(/\d+/g)
+      .map(Number),
+    buttonForeground: getComputedStyle(el.querySelector(".rq-button.primary"))
+      .color.match(/\d+/g)
+      .map(Number),
+  }));
+  assert.ok(Math.max(...colors.background.slice(0, 3)) <= 24);
+  assert.equal(colors.background[0], colors.background[1]);
+  assert.equal(colors.background[1], colors.background[2]);
+  const luminance = (rgb) =>
+    rgb
+      .slice(0, 3)
+      .map((n) => n / 255)
+      .map((n) => (n <= 0.04045 ? n / 12.92 : ((n + 0.055) / 1.055) ** 2.4))
+      .reduce((v, n, i) => v + n * [0.2126, 0.7152, 0.0722][i], 0);
+  assert.ok(
+    (luminance(colors.foreground) + 0.05) /
+      (luminance(colors.background) + 0.05) >=
+      7,
+  );
+  assert.ok(
+    (luminance(colors.buttonForeground) + 0.05) /
+      (luminance(colors.buttonBackground) + 0.05) >=
+      4.5,
+  );
+});
 await page.getByRole("button", { name: "Logs", exact: true }).click();
 await check("Logs estruturados", async () =>
   assert.ok((await page.locator(".log-table tbody tr").count()) >= 8),
@@ -290,6 +327,16 @@ await check("Demo restaurada sem misturar produção", async () => {
   assert.equal(await page.locator('[data-run-id="LIVE-1"]').count(), 0);
   assert.equal(await page.locator(".live-card").count(), 8);
 });
+await page.evaluate(() =>
+  localStorage.setItem("resolveqa.workspace.v2", "null"),
+);
+await page.reload();
+await page.waitForFunction(
+  () => document.querySelectorAll(".live-card").length === 8,
+);
+await check("Armazenamento inválido recupera a demonstração", async () =>
+  assert.equal(await page.locator(".live-card").count(), 8),
+);
 assert.deepEqual(errors, []);
 await fs.writeFile(
   `${out}/functional-checks.json`,

@@ -1,0 +1,30 @@
+{
+  "checks": [
+    "Landing contém documentação e playbooks",
+    "Landing mobile sem overflow horizontal",
+    "Admin abre painel com execuções",
+    "Admin preto com contraste legível",
+    "Logs estruturados",
+    "Trace waterfall",
+    "Cadastro de playbook",
+    "Playbook persiste após reload",
+    "Exclusão de playbook",
+    "Referências de documentação",
+    "Admin mobile sem overflow horizontal",
+    "Mola transporta card após evento",
+    "Criação de caso no quadro",
+    "Detalhes fecham com Escape",
+    "Quadro mobile rola dentro do Kanban",
+    "Produção limpa dados demo",
+    "Consulta de produção usa contrato real",
+    "Mudança recebida da API aciona transporte em produção",
+    "Demo restaurada sem misturar produção",
+    "Armazenamento inválido recupera a demonstração"
+  ],
+  "errors": [],
+  "viewports": [
+    "1536x1024",
+    "390x844"
+  ],
+  "production": "API mocked locally; no real remote backend activation"
+}

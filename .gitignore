@@ -43,3 +43,9 @@ yarn-error.log*
 
 # OS metadata
 .DS_Store
+
+# Local design process and browser test artifacts (reviewed evidence lives in docs/evidence)
+/.impeccable/build/
+/.impeccable/mocks/
+/.impeccable/review/
+/.impeccable/concept-seed.txt
