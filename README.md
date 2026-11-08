@@ -1,6 +1,12 @@
-# Mola · ResolveQA Front
+# ResolveQA · Mola e Admin
 
-Frontend experimental para acompanhar trabalho em um Kanban com uma mola de brinquedo em pixel art. A mola transporta os cards entre **A fazer**, **Em andamento** e **Concluído**.
+Workspace para acompanhar a resolução de bugs por agentes: relato, reprodução, correção e verificação independente, com evidências, referências de documentação e playbooks por empresa.
+
+- `/`: landing baseada na primeira referência aprovada, com acessos diretos aos dois ambientes.
+- `/quadro`: Kanban operacional com criação, busca, filtros, detalhes, lista e transporte pela Mola original.
+- `/admin`: painel preto com execuções, métricas derivadas dos casos, logs exportáveis, traces, agentes, documentação, CRUD de playbooks e configuração da conexão.
+
+**Demo** usa dados sintéticos e armazenamento local. **Produção** consulta a API configurada e recebe SSE opcional; não usa dados de exemplo como fallback. Veja [como conectar e o que falta no backend](docs/production-connection.md).
 
 ## Rodar
 
@@ -20,14 +26,38 @@ npm run start
 
 ## O que explorar
 
+- Cadastro, edição, ativação/pausa e exclusão de playbooks em demonstração, com persistência no navegador.
+- Eventos de agentes criando casos e acionando o transporte dos cards. A fila de animação não define o estado de domínio.
+- Coluna **Atenção** para `needs_info`, `blocked` e `infra_error`; apenas `verified` entra em **Concluído**.
+- Troca explícita entre demonstração e produção, consulta periódica de casos e stream SSE configurável.
+- Fontes Montserrat e Manrope hospedadas localmente, com licenças em `public/fonts`.
+
 - Uma mola arco-íris, com seis opções de matiz da mesma arte.
 - Avanço manual, reprodução automática pausável e arrastar/soltar cards.
 - Criação de tarefas, filtro por agente, detalhes e registro de eventos.
 - Estado salvo no navegador, importação e exportação de snapshots JSON.
 - Layout responsivo, navegação por teclado e redução de movimento conforme a preferência do sistema.
-- Duas pranchas de direção visual com variantes e estudos de animação.
+- Pranchas e estudos anteriores preservados no repositório como histórico de arte.
 
-O quadro inicia em **modo demonstração**. Os nomes dos agentes e as tarefas iniciais são ilustrativos. Os eventos registram interações desta sessão; não há conexão ativa ao GitHub, ao Maestri ou a um serviço de agentes. Um snapshot importado continua sendo uma cópia local dos dados.
+O quadro inicia em **modo demonstração**. Os casos, spans e documentos iniciais são ilustrativos. Em produção, o front depende de uma API real configurada e protegida pelo gateway da empresa. A criação/consulta de casos segue o backend `moouraajv/ResolveQA`; snapshot, SSE, spans e playbooks são extensões documentadas, ainda não encontradas nas branches auditadas. Não há merge, deploy, execução de agentes ou edição de documentação pelo navegador.
+
+## Validação
+
+```sh
+npm test
+npx tsc --noEmit
+npm run lint
+npm run build
+```
+
+Com o servidor dev rodando e Chrome instalado:
+
+```sh
+npm run test:browser
+npm run test:stream
+```
+
+`CHROME_PATH` seleciona um executável alternativo; `RESOLVEQA_BASE_URL` troca o endereço do front. O teste de stream abre uma API HTTP/SSE controlada em uma porta local efêmera. As verificações de produção usam serviços locais de teste e não representam ativação de um backend remoto.
 
 ## Direção visual
 
@@ -45,7 +75,11 @@ O personagem usa um atlas gerado por estado, baseado no desenho da primeira pran
 
 ## Fonte
 
-- `app/page.tsx`: estado do quadro e interações.
+- `app/page.tsx`: landing e acessos aos ambientes.
+- `app/quadro/page.tsx`: Kanban e transporte por fila.
+- `app/admin/page.tsx`: painel administrativo e editor de playbooks.
+- `components/workspace/`: provider compartilhado, shell, formulários e visualizações.
+- `lib/resolveqa/`: contratos validados, adaptador HTTP/SSE e dados de demonstração.
 - `app/globals.css`: composição, responsividade e movimento.
 - `components/mola/`: atlas, física, palco interativo e transporte.
 - `public/moodboards/`: pranchas PNG em resolução original.
