@@ -200,7 +200,7 @@ export function runTransport(opts: TransportOptions) {
     emit({
       phase,
       local,
-      slinkyCycle: smoothstep(local) * 2,
+      slinkyCycle: local, // Eight distinct poses over the 0.8-second unloaded leg.
       state: phase === "seek" ? "SEEKING_TASK" : phase === "carry" ? "CARRYING_TASK" : phase === "return" ? "RETURNING" : phase === "idle" ? "IDLE" : phase === "compress" || phase === "reach" ? "PICKING_TASK" : "DELIVERING_TASK",
       facing: (phase === "seek" ? from.x - wp.home.x : phase === "return" ? wp.home.x - to.x : to.x - from.x) < 0 ? -1 : 1,
       x: pos.x,

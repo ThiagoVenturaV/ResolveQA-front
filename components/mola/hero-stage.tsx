@@ -301,7 +301,7 @@ export function HeroStage({ skin }: HeroStageProps) {
         }
       }
       // Integrate the unloaded gait with the existing RAF and speed controller.
-      s.slinkyCycle += dt * (s.mode === "move" ? Math.max(0.4, Math.abs(s.vx) * 3) : 0.32);
+      s.slinkyCycle += dt * 1.25;
       s.slinkyStrength = approach(s.slinkyStrength, s.mode === "move" ? 1 : 0.45, dt * 5);
       paint();
     };

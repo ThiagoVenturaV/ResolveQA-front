@@ -20,25 +20,12 @@ try {
     const a = samplePath(wp, phases[i - 1], 1), b = samplePath(wp, phases[i], 0);
     assert.ok(Math.hypot(a.x - b.x, a.y - b.y) < 1e-9, `continuous ${phases[i]}`);
   }
-  const { slinkyOffsets, slinkyHop } = await import(pathToFileURL(join(dir, 'slinky.ts')));
-  const pose = cycle => ({ cycle, strength: 1, facing: 1 });
-  for (const t of [0, 0.25, 0.5, 0.75, 1]) {
-    const a = slinkyOffsets(t, pose(1 - 1e-8)), b = slinkyOffsets(t, pose(0));
-    assert.ok(Math.hypot(a.x - b.x, a.y - b.y) < 1e-4, 'seamless Slinky cycle');
-    const rest = slinkyOffsets(t, { ...pose(0.3), strength: 0 });
-    assert.ok(rest.x === 0 && rest.y === 0, 'reduced motion is static');
-  }
-  assert.ok(slinkyOffsets(1, pose(0.25)).y < -20, 'front lifts first');
-  assert.ok(Math.abs(slinkyOffsets(0, pose(0.25)).y) < 1e-9, 'rear stays planted');
-  assert.ok(slinkyOffsets(0, pose(0.75)).y < -20, 'rear follows later');
-  assert.ok(Math.abs(slinkyOffsets(1, pose(0.75)).y) < 1e-9, 'front supports second half');
-  for (const joint of [0.16, 0.76, 1]) {
-    const a = slinkyHop(joint - 1e-8), b = slinkyHop(joint);
-    assert.ok(Math.abs(a.lift - b.lift) < 1e-4 && Math.abs(a.stretch - b.stretch) < 1e-4, 'continuous jump phases');
-  }
-  assert.ok(slinkyHop(0.12).stretch < 0.9, 'anticipation compression');
-  assert.ok(slinkyHop(0.46).lift > 60, 'visible airborne phase');
-  assert.equal(slinkyHop(0.85).lift, 0, 'landing touches ground');
+  const { slinkyFrame, SLINKY_SHEET } = await import(pathToFileURL(join(dir, 'slinky.ts')));
+  assert.equal(SLINKY_SHEET.count, 8);
+  for (let i = 0; i < 8; i++) assert.equal(slinkyFrame(i / 8), i, 'all eight drawn poses selected');
+  assert.equal(slinkyFrame(1), 0, 'loop returns to first pose');
+  assert.equal(slinkyFrame(-0.125), 7, 'reverse wrapping');
+  assert.equal(slinkyFrame(0.124), 0, 'pose held until next frame');
   let queue = new Map(), serial = 0;
   globalThis.requestAnimationFrame = cb => { queue.set(++serial, cb); return serial; };
   globalThis.cancelAnimationFrame = id => queue.delete(id);

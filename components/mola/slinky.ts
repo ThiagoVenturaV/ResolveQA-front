@@ -1,81 +1,61 @@
-import { ATLAS, ATLAS_SRC } from "./atlas";
-import { smoothstep } from "./physics";
+import { ATLAS_SRC } from "./atlas";
 
+export const SLINKY_SHEET = {
+  src: "/mascot/mola-rainbow/slinky-poses-feet-v2.webp",
+  columns: 4, rows: 2, cellW: 384, cellH: 512, count: 8, fps: 10,
+} as const;
+export const WALK_SHEET = { ...SLINKY_SHEET, src: "/mascot/mola-rainbow/walk-poses-v2.webp" } as const;
+const WALK_GROUNDS = [470, 470, 470, 470, 449, 449, 449, 449];
+const WALK_TOPS = [240, 237, 230, 221, 221, 227, 218, 211];
+export function walkGrab(frame: number): [number, number] {
+  const i = ((frame % 8) + 8) % 8;
+  return [96, 179 + (WALK_TOPS[i] - WALK_GROUNDS[i]) * 0.5 + 4];
+}
 export type SlinkyPose = { cycle: number; strength: number; facing: 1 | -1 };
 
-/** Anticipate → take off → flight → landing → settle. All joints are continuous. */
-export function slinkyHop(cycle: number) {
-  const p = ((cycle % 1) + 1) % 1;
-  if (p < 0.16) return { lift: 0, stretch: 1 - 0.18 * smoothstep(p / 0.16) };
-  if (p < 0.76) {
-    const flight = (p - 0.16) / 0.6;
-    return {
-      lift: 62 * Math.sin(Math.PI * flight),
-      stretch: 0.82 + 0.26 * Math.sin(Math.PI * flight),
-    };
-  }
-  const landing = (p - 0.76) / 0.24;
-  return { lift: 0, stretch: 0.82 + 0.18 * smoothstep(landing) + 0.035 * Math.sin(landing * Math.PI * 2) * Math.sin(landing * Math.PI) };
+export function slinkyFrame(cycle: number) {
+  return ((Math.floor(cycle * SLINKY_SHEET.count) % SLINKY_SHEET.count) + SLINKY_SHEET.count) % SLINKY_SHEET.count;
 }
 
-/** Two alternating supports: lead end advances first, trailing end catches up. */
-export function slinkyOffsets(t: number, pose: SlinkyPose) {
-  const p = ((pose.cycle % 1) + 1) % 1;
-  const lead = smoothstep(p * 2);
-  const trail = smoothstep((p - 0.5) * 2);
-  const frontX = 36 * (lead - p);
-  const rearX = 36 * (trail - p);
-  const frontY = p < 0.5 ? -28 * Math.sin(Math.PI * lead) : 0;
-  const rearY = p >= 0.5 ? -28 * Math.sin(Math.PI * trail) : 0;
-  // A delayed wave along the coil bends the arch, rather than scaling the image.
-  const wave = Math.sin(Math.PI * t) * Math.sin(2 * Math.PI * (p - t * 0.24)) * 14;
-  return {
-    x: ((1 - t) * rearX + t * frontX) * pose.strength,
-    y: ((1 - t) * rearY + t * frontY + wave) * pose.strength,
-  };
-}
+const images = new Map<string, HTMLImageElement>();
 
-let image: HTMLImageElement | undefined;
-
-/** Paints the existing idle artwork as narrow elastic strips; owns no timers. */
-export function paintSlinky(host: HTMLElement, pose: SlinkyPose | null) {
+/** Select a newly drawn pose. No strip deformation, squash, or procedural hop. */
+export function paintSlinky(host: HTMLElement, pose: SlinkyPose | null, walkFrame?: number, facing: 1 | -1 = 1) {
   const canvas = host.querySelector<HTMLCanvasElement>(".mola-slinky");
   if (!canvas) return;
-  if (!pose) {
+  if (!pose && walkFrame === undefined) {
     canvas.hidden = true;
     host.style.backgroundImage = `url(${ATLAS_SRC})`;
     host.dataset.locomotion = "walk";
+    delete host.dataset.slinkyFrame;
     return;
   }
-  if (!image) { image = new Image(); image.src = ATLAS_SRC; }
+  // Warm both sheets before pickup so switching to carrying does not wait on I/O.
+  for (const src of [SLINKY_SHEET.src, WALK_SHEET.src]) {
+    if (!images.has(src)) { const img = new Image(); img.src = src; images.set(src, img); }
+  }
+  const source = pose ? SLINKY_SHEET.src : WALK_SHEET.src;
+  let image = images.get(source);
+  if (!image) { image = new Image(); image.src = source; images.set(source, image); }
   if (!image.complete || !image.naturalWidth) return;
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
+  const frame = pose ? (pose.strength === 0 ? 0 : slinkyFrame(pose.cycle)) : ((walkFrame! % 8) + 8) % 8;
+  const direction = pose?.facing ?? facing;
+  const ground = pose ? (frame < 4 ? 470 : 472) : WALK_GROUNDS[frame];
   canvas.hidden = false;
   host.style.backgroundImage = "none";
-  host.dataset.locomotion = "slinky";
+  host.dataset.locomotion = pose ? "slinky" : "walk";
+  host.dataset.poseFrame = String(frame);
+  if (pose) host.dataset.slinkyFrame = String(frame);
+  else delete host.dataset.slinkyFrame;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const hop = slinkyHop(pose.cycle);
-  const lift = hop.lift * pose.strength;
-  const stretch = 1 + (hop.stretch - 1) * pose.strength;
   ctx.save();
-  ctx.translate(16 + (pose.facing < 0 ? ATLAS.cellW : 0), 64);
-  ctx.scale(pose.facing, 1);
+  ctx.translate(16 + (direction < 0 ? 192 : 0), 64);
+  ctx.scale(direction, 1);
   ctx.imageSmoothingEnabled = false;
-  // The fixed shadow provides a ground reference while the body is airborne.
-  ctx.fillStyle = `rgba(41,43,35,${0.16 - lift / 620})`;
-  ctx.beginPath();
-  ctx.ellipse(96, 181, 58 - lift * 0.25, 5, 0, 0, Math.PI * 2);
-  ctx.fill();
-  // Overlapping subpixel strips avoid cracks while retaining the original face,
-  // rainbow coils and pixel-art texture. No generated replacement character.
-  for (let x = 0; x < ATLAS.cellW; x += 2) {
-    const t = Math.max(0, Math.min(1, (x - 16) / 160));
-    const nextT = Math.max(0, Math.min(1, (x + 2 - 16) / 160));
-    const a = slinkyOffsets(t, pose), b = slinkyOffsets(nextT, pose);
-    ctx.drawImage(image, x, 0, 2, ATLAS.cellH,
-      x + a.x, 179 * (1 - stretch) + a.y - lift,
-      2 + b.x - a.x + 0.4, ATLAS.cellH * stretch);
-  }
+  // One fixed scale and baseline for every pose. Motion comes from the artwork.
+  ctx.drawImage(image, (frame % 4) * 384, Math.floor(frame / 4) * 512,
+    384, 512, 0, 179 - ground * 0.5, 192, 256);
   ctx.restore();
 }
