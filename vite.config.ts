@@ -1,5 +1,5 @@
 import vinext from "vinext";
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import hostingConfig from "./.openai/hosting.json";
 import { readExecutionProfile } from "./scripts/execution-profile.mjs";
 import { configureToolEnvironment } from "./scripts/tool-environment.mjs";
@@ -37,13 +37,30 @@ const localBindingConfig = {
     : [],
 };
 
-export default defineConfig(async ({ command }) => {
+export default defineConfig(async ({ command, mode }) => {
   configureToolEnvironment(process.cwd());
+  const env = loadEnv(mode, process.cwd(), "RESOLVEQA_");
+  const publicSettings = [
+    "RESOLVEQA_MODE",
+    "RESOLVEQA_API_URL",
+    "RESOLVEQA_CASE_IDS",
+    "RESOLVEQA_SNAPSHOT_PATH",
+    "RESOLVEQA_EVENTS_PATH",
+    "RESOLVEQA_PLAYBOOKS_PATH",
+  ];
 
   // Wrangler snapshots its log path while the Cloudflare plugin is imported.
   const { cloudflare } = await import("@cloudflare/vite-plugin");
 
   return {
+    // The worker runtime does not inherit arbitrary host process variables.
+    // Explicit allowlist: never serialize the full environment or any secrets.
+    define: Object.fromEntries(
+      publicSettings.map((key) => [
+        `process.env.${key}`,
+        JSON.stringify(env[key] || ""),
+      ]),
+    ),
     server: {
       ...(managedLinux
         ? { host: "0.0.0.0", allowedHosts: ["terminal.local"] }
