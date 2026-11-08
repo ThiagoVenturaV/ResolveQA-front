@@ -17,3 +17,5 @@ A primeira referência foi escolhida explicitamente pelo usuário: `.impeccable/
 **Limites:** As APIs adicionais não encontradas no backend são configuráveis e documentadas como contrato proposto. A demonstração não implica publicação, autenticação, agentes em execução ou instrumentação remota.
 
 **Correção posterior do usuário:** Admin em preto e cinzas neutros; remover superfícies e matizes verdes do painel. Laranja permanece como acento, alertas preservam distinção semântica.
+
+**Ajuste posterior do usuário:** ambiente definido apenas em .env; não renderizar seletor ou formulário técnico. A landing e os painéis explicam conceitos em linguagem comum e mantêm os dados originais apenas para integração.

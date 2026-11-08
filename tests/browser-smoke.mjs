@@ -16,6 +16,19 @@ const browser = await chromium.launch({
 const context = await browser.newContext({
   viewport: { width: 1536, height: 1024 },
 });
+await context.addInitScript(() => {
+  if (!localStorage.getItem("env-override-attempt")) {
+    localStorage.setItem("env-override-attempt", "1");
+    localStorage.setItem(
+      "resolveqa.workspace.v2",
+      JSON.stringify({
+        mode: "production",
+        config: { baseUrl: "https://wrong.invalid" },
+        playbooks: undefined,
+      }),
+    );
+  }
+});
 const page = await context.newPage();
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
@@ -24,6 +37,12 @@ async function check(name, fn) {
   await fn();
   checks.push(name);
   console.log("PASS", name);
+}
+async function plainLanguage() {
+  assert.doesNotMatch(
+    await page.locator("body").innerText(),
+    /backend|snapshot|\bSSE\b|\bHTTP\b|\bSHA[- ]?256\b|\bLLM\b|\bTraces?\b|\bLogs\b|\bspans?\b|heartbeat|\bRED\b|\bGREEN\b|\bp95\b|\bAPI\b|needs_info/i,
+  );
 }
 const base = process.env.RESOLVEQA_BASE_URL || "http://127.0.0.1:5173";
 async function settle() {
@@ -48,6 +67,17 @@ await check("Landing contém documentação e playbooks", async () => {
     /documentação atualizada/i,
   );
 });
+await check(
+  "Landing sem seletor de ambiente ou linguagem de configuração",
+  async () => {
+    assert.equal(await page.locator(".mode-switch").count(), 0);
+    const text = await page.locator("body").innerText();
+    assert.doesNotMatch(
+      text,
+      /modo demo|modo produção|backend|snapshot|SSE|HTTP|SHA-?256|\bLLM\b|\bTraces?\b|\bLogs\b/,
+    );
+  },
+);
 await page.screenshot({ path: `${out}/desktop.png`, fullPage: true });
 await page.screenshot({ path: `${out}/desktop-viewport.png` });
 await page.setViewportSize({ width: 390, height: 844 });
@@ -106,24 +136,29 @@ await check("Admin preto com contraste legível", async () => {
       4.5,
   );
 });
-await page.getByRole("button", { name: "Logs", exact: true }).click();
+await page.getByRole("button", { name: "Atividades", exact: true }).click();
 await check("Logs estruturados", async () =>
   assert.ok((await page.locator(".log-table tbody tr").count()) >= 8),
 );
-await page.getByRole("button", { name: "Traces", exact: true }).click();
+await page
+  .getByRole("button", { name: "Tempo por etapa", exact: true })
+  .click();
 await check("Trace waterfall", async () =>
   assert.equal(await page.locator(".span-row").count(), 4),
 );
-await page.getByRole("button", { name: "Playbooks", exact: true }).click();
-await page.getByRole("button", { name: "Novo playbook", exact: true }).click();
+await plainLanguage();
+await page.getByRole("button", { name: "Procedimentos", exact: true }).click();
+await page
+  .getByRole("button", { name: "Novo procedimento", exact: true })
+  .click();
 await page.getByLabel("Nome", { exact: true }).fill("QA smoke playbook");
 await page.getByLabel("Empresa", { exact: true }).fill("Smoke empresa");
-await page.getByLabel("Repositório", { exact: true }).fill("smoke/repo");
+await page.getByLabel("Projeto", { exact: true }).fill("smoke/repo");
 await page
   .getByLabel("Instruções", { exact: true })
   .fill("Reproduzir, verificar e atualizar a documentação.");
 await page
-  .getByRole("button", { name: "Salvar playbook", exact: true })
+  .getByRole("button", { name: "Salvar procedimento", exact: true })
   .click();
 await check(
   "Cadastro de playbook",
@@ -133,7 +168,7 @@ await check(
       .waitFor(),
 );
 await page.reload();
-await page.getByRole("button", { name: "Playbooks", exact: true }).click();
+await page.getByRole("button", { name: "Procedimentos", exact: true }).click();
 await check(
   "Playbook persiste após reload",
   async () =>
@@ -184,9 +219,11 @@ await page
   .getByRole("heading", { name: "O trabalho em movimento.", exact: true })
   .waitFor();
 await settle();
-await page.getByRole("button", { name: "Reiniciar demonstração" }).click();
+await page.getByRole("button", { name: "Reiniciar exemplos" }).click();
 await page.screenshot({ path: `${out}/board-desktop.png`, fullPage: true });
-await page.getByRole("button", { name: "Próximo evento", exact: true }).click();
+await page
+  .getByRole("button", { name: "Próxima atividade", exact: true })
+  .click();
 await page.waitForSelector(".transport:not([hidden])", { state: "attached" });
 await page.waitForTimeout(1500);
 await page.screenshot({ path: `${out}/board-motion.png` });
@@ -223,7 +260,7 @@ await page.keyboard.press("Escape");
 await check("Detalhes fecham com Escape", async () =>
   assert.equal(await page.locator(".case-drawer").count(), 0),
 );
-await page.getByRole("button", { name: "Reiniciar demonstração" }).click();
+await page.getByRole("button", { name: "Reiniciar exemplos" }).click();
 await page.setViewportSize({ width: 390, height: 844 });
 await settle();
 await page.screenshot({ path: `${out}/board-mobile.png`, fullPage: true });
@@ -241,92 +278,6 @@ await check("Quadro mobile rola dentro do Kanban", async () => {
   );
 });
 await page.setViewportSize({ width: 1536, height: 1024 });
-await page.getByRole("button", { name: "Produção", exact: true }).click();
-await check("Produção limpa dados demo", async () =>
-  assert.equal(await page.locator(".live-card").count(), 0),
-);
-await page.getByRole("link", { name: "Admin", exact: true }).click();
-await page.getByRole("button", { name: "Conexão", exact: true }).click();
-const now = new Date().toISOString();
-let run = {
-  case_id: "LIVE-1",
-  client_id: "Real client",
-  repo_ref: "real/repo",
-  channel: "api",
-  report_text: "Caso do backend de teste",
-  state: "created",
-  attempts: { fix: 0, llm_calls: 0 },
-  evidence_ids: [],
-  created_at: now,
-  updated_at: now,
-  terminal_reason: null,
-};
-let snapshot = { cases: [run], events: [], spans: [], documents: [] };
-await page.route("http://127.0.0.1:4189/**", async (route) => {
-  const path = new URL(route.request().url()).pathname;
-  const headers = {
-    "access-control-allow-origin": "*",
-    "content-type": "application/json",
-  };
-  if (route.request().method() === "OPTIONS")
-    return route.fulfill({
-      status: 204,
-      headers: {
-        ...headers,
-        "access-control-allow-methods": "GET,POST,PUT,DELETE",
-        "access-control-allow-headers": "content-type",
-      },
-    });
-  let body =
-    path === "/health"
-      ? { ok: true }
-      : path === "/snapshot"
-        ? snapshot
-        : path === "/api/cases/LIVE-1"
-          ? { case: run }
-          : [];
-  return route.fulfill({ status: 200, headers, body: JSON.stringify(body) });
-});
-await page.getByLabel("URL do backend").fill("http://127.0.0.1:4189");
-await page.getByLabel("IDs dos casos acompanhados").fill("LIVE-1");
-await page.getByRole("button", { name: "Salvar conexão", exact: true }).click();
-await page.getByRole("button", { name: "Visão geral", exact: true }).click();
-await page.getByText("1 casos no período").waitFor();
-await check(
-  "Consulta de produção usa contrato real",
-  async () =>
-    await page
-      .getByRole("button", { name: /LIVE-1 Caso do backend de teste/ })
-      .waitFor(),
-);
-await page.getByRole("button", { name: "Conexão", exact: true }).click();
-await page.locator("summary").click();
-await page.getByLabel("Snapshot de operação").fill("/snapshot");
-await page.getByRole("button", { name: "Salvar conexão", exact: true }).click();
-await page.getByRole("link", { name: "Mola", exact: true }).click();
-await page.locator('[data-run-id="LIVE-1"]').waitFor();
-run = {
-  ...run,
-  state: "fixing",
-  updated_at: new Date(Date.now() + 100).toISOString(),
-};
-snapshot = { ...snapshot, cases: [run] };
-await page
-  .getByRole("button", { name: "Atualizar dados", exact: true })
-  .click();
-await page.waitForSelector(".transport:not([hidden])", { state: "attached" });
-await page.waitForFunction(() => document.querySelector(".transport")?.hidden);
-await check("Mudança recebida da API aciona transporte em produção", async () =>
-  assert.equal(
-    await page.locator('[data-lane="active"] [data-run-id="LIVE-1"]').count(),
-    1,
-  ),
-);
-await page.getByRole("button", { name: "Demo", exact: true }).click();
-await check("Demo restaurada sem misturar produção", async () => {
-  assert.equal(await page.locator('[data-run-id="LIVE-1"]').count(), 0);
-  assert.equal(await page.locator(".live-card").count(), 8);
-});
 await page.evaluate(() =>
   localStorage.setItem("resolveqa.workspace.v2", "null"),
 );
@@ -337,6 +288,15 @@ await page.waitForFunction(
 await check("Armazenamento inválido recupera a demonstração", async () =>
   assert.equal(await page.locator(".live-card").count(), 8),
 );
+await check("Preferência antiga não sobrepõe o env", async () => {
+  const saved = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("resolveqa.workspace.v2")),
+  );
+  assert.ok(!("mode" in saved));
+  assert.ok(!("config" in saved));
+  assert.equal(await page.locator(".live-card").count(), 8);
+});
+await plainLanguage();
 assert.deepEqual(errors, []);
 await fs.writeFile(
   `${out}/functional-checks.json`,
@@ -345,7 +305,8 @@ await fs.writeFile(
       checks,
       errors,
       viewports: ["1536x1024", "390x844"],
-      production: "API mocked locally; no real remote backend activation",
+      configuration:
+        "Demo from env; stored mode/config cannot override it. Production validated separately by test:stream.",
     },
     null,
     2,

@@ -206,30 +206,6 @@ small {
   text-decoration: underline;
   text-underline-offset: 4px;
 }
-.mode-switch {
-  display: flex;
-  padding: 3px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  gap: 2px;
-  background: #f8f7f3;
-  white-space: nowrap;
-}
-.mode-switch button {
-  border: 0;
-  padding: 5px 13px;
-  border-radius: 5px;
-  background: none;
-  font-size: 11px;
-  font-weight: 650;
-}
-.mode-switch button[aria-pressed="true"] {
-  background: var(--ink);
-  color: white;
-}
-.mode-switch button:hover:not([aria-pressed="true"]) {
-  background: #e9e9e0;
-}
 .env-label,
 .connection-label {
   font-size: 10px;
@@ -2471,10 +2447,6 @@ tr:hover td {
   .rq-header-end {
     margin-left: 0;
   }
-  .mode-switch button {
-    font-size: 10px;
-    padding: 5px 9px;
-  }
   .rq-hero {
     padding-top: 29px;
     gap: 25px;
@@ -2789,10 +2761,6 @@ tr:hover td {
   }
   .app-topbar .app-topbar-end {
     gap: 7px;
-  }
-  .app-topbar .mode-switch button {
-    font-size: 9px;
-    padding: 4px 9px;
   }
   .environment-bar {
     font-size: 8px;
@@ -3266,16 +3234,6 @@ tr:hover td {
   background: #35251d;
   color: #f4b897;
 }
-.rq-admin-app .mode-switch {
-  background: #1b1b1b;
-}
-.rq-admin-app .mode-switch button[aria-pressed="true"] {
-  background: #eee;
-  color: #111;
-}
-.rq-admin-app .mode-switch button:hover:not([aria-pressed="true"]) {
-  background: #333;
-}
 .rq-admin-app .environment-bar {
   background: #1b1b1b;
   color: #bfbfbf;
@@ -3707,4 +3665,8 @@ tr:hover td {
   background: #b84e2e;
   border-color: #b84e2e;
   color: #fff8ef;
+}
+
+.rq-header > .rq-button {
+  margin-left: auto;
 }

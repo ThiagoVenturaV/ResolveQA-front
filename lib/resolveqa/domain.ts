@@ -135,12 +135,12 @@ export const labels: Record<CaseState, string> = {
   reproducing: "Reproduzindo",
   reproduced: "Reproduzido",
   fixing: "Corrigindo",
-  fixed: "Patch pronto",
+  fixed: "Correção pronta",
   verifying: "Verificando",
   verified: "Verificado",
   needs_info: "Precisa de informação",
   blocked: "Bloqueado",
-  infra_error: "Falha de infraestrutura",
+  infra_error: "Serviço indisponível",
 };
 export const terminal = (s: CaseState) =>
   ["verified", "needs_info", "blocked", "infra_error"].includes(s);

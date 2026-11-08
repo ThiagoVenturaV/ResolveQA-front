@@ -336,14 +336,6 @@
       "css": ".ds-card{padding:10px;background:var(--surface,#fffefa);border:1px solid #d9dece;border-radius:9px;font:11px/1.6 Manrope,sans-serif;color:var(--ink,#232622);transition:box-shadow .2s,opacity .2s}.ds-card:hover{box-shadow:0 4px 12px #3d4b2a0f}.ds-card code{font-family:Consolas,monospace}.ds-title{display:block;text-align:left;padding:0;margin:8px 0;background:none;border:0;color:inherit;font:650 13px Manrope,sans-serif;cursor:pointer}.ds-title:hover{text-decoration:underline}.ds-title:focus-visible{outline:3px solid #c66a36;outline-offset:3px}"
     },
     {
-      "name": "Environment switch",
-      "kind": "nav",
-      "refersTo": "mode-switch",
-      "description": "Grupo de seleção de ambiente; a aplicação gerencia aria-pressed.",
-      "html": "<div class=\"ds-mode\" role=\"group\" aria-label=\"Fonte dos dados\"><button aria-pressed=\"true\">Demo</button><button aria-pressed=\"false\">Produção</button></div>",
-      "css": ".ds-mode{display:inline-flex;padding:3px;border:1px solid var(--line,#ddddd4);border-radius:8px;gap:2px;background:#f8f7f3}.ds-mode button{border:0;padding:5px 13px;border-radius:5px;background:none;font:650 11px Manrope,sans-serif;cursor:pointer}.ds-mode button[aria-pressed=\"true\"]{background:var(--ink,#232622);color:white}.ds-mode button:hover:not([aria-pressed=\"true\"]){background:#e9e9e0}.ds-mode button:focus-visible{outline:3px solid #c66a36;outline-offset:3px}"
-    },
-    {
       "name": "Admin panel",
       "kind": "card",
       "refersTo": "admin-panel",
@@ -374,7 +366,7 @@
       },
       {
         "name": "The Evidence Hierarchy Rule",
-        "body": "Separe contexto, ações, indicadores e dados por alinhamento e divisórias; mantenha busca, ambiente e detalhes disponíveis no responsivo.",
+        "body": "Separe contexto, ações, indicadores e dados por alinhamento e divisórias; mantenha busca, acompanhamento e detalhes disponíveis no responsivo.",
         "section": "layout"
       }
     ],
@@ -389,5 +381,9 @@
       "Don't substitua o personagem original por uma ilustração genérica.",
       "Don't apresente dados de demonstração como operação remota comprovada."
     ]
+  },
+  "interfacePolicy": {
+    "environment": "Server env only; no client selector or connection editor.",
+    "copy": "Use plain Portuguese: Atividades, Tempo por etapa, Projeto and Procedimentos. Explain results instead of showing hashes, HTTP codes and machine labels."
   }
 }

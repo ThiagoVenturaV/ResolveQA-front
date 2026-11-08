@@ -1,4 +1,5 @@
 "use client";
+import { agentLabel, explainText } from "@/lib/resolveqa/copy";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -143,7 +144,7 @@ export default function BoardPage() {
   });
   const cases = projected.filter(
     (c) =>
-      `${c.case_id} ${c.report_text} ${c.repo_ref}`
+      `${c.case_id} ${explainText(c.report_text)} ${c.repo_ref}`
         .toLowerCase()
         .includes(query.toLowerCase()) &&
       (agent === "all" || agentOf(c.state) === agent) &&
@@ -177,9 +178,9 @@ export default function BoardPage() {
         </div>
         {r.mode === "production" && !r.config.baseUrl && (
           <div className="rq-alert">
-            O quadro está aguardando uma conexão real.{" "}
+            Estamos aguardando as informações da equipe.{" "}
             <Link href="/admin" className="inline-action">
-              Configurar no Admin <ArrowRight size={14} />
+              Ver acompanhamento <ArrowRight size={14} />
             </Link>
           </div>
         )}
@@ -188,9 +189,9 @@ export default function BoardPage() {
             <span className="project-icon">
               <Columns3 size={19} />
             </span>
-            <strong>Pipeline de resolução</strong>
+            <strong>Fluxo de resolução</strong>
             <span className="muted">/</span>
-            <span>{r.mode === "demo" ? "Acme Commerce" : "Produção"}</span>
+            <span>{r.mode === "demo" ? "Acme Commerce" : "Minha equipe"}</span>
           </div>
           <div
             className="board-layout-toggle"
@@ -221,7 +222,9 @@ export default function BoardPage() {
             <select value={agent} onChange={(e) => setAgent(e.target.value)}>
               <option value="all">Todos os agentes</option>
               {["Triage", "Reproducer", "Fixer", "Verifier"].map((a) => (
-                <option key={a}>{a}</option>
+                <option key={a} value={a}>
+                  {agentLabel(a)}
+                </option>
               ))}
             </select>
           </label>
@@ -243,7 +246,7 @@ export default function BoardPage() {
             <div className="demo-controls">
               <button className="rq-button small" onClick={r.step}>
                 <SkipForward size={14} />
-                Próximo evento
+                Próxima atividade
               </button>
               <button
                 className="rq-button small"
@@ -254,7 +257,7 @@ export default function BoardPage() {
               </button>
               <button
                 className="rq-icon-button"
-                aria-label="Reiniciar demonstração"
+                aria-label="Reiniciar exemplos"
                 onClick={r.reset}
               >
                 <RotateCcw size={15} />
@@ -322,7 +325,7 @@ export default function BoardPage() {
                           className="live-card-title"
                           onClick={() => setSelected(c.case_id)}
                         >
-                          {c.report_text}
+                          {explainText(c.report_text)}
                         </button>
                         <span className="card-repo">
                           <BookOpen size={11} />
@@ -343,7 +346,7 @@ export default function BoardPage() {
                             >
                               <Bot size={12} />
                             </span>
-                            {agentOf(c.state)}
+                            {agentLabel(agentOf(c.state))}
                           </span>
                           <span>
                             <FileText size={11} />
@@ -404,10 +407,10 @@ export default function BoardPage() {
                           className="run-title"
                           onClick={() => setSelected(c.case_id)}
                         >
-                          {c.report_text}
+                          {explainText(c.report_text)}
                         </button>
                       </td>
-                      <td>{agentOf(c.state)}</td>
+                      <td>{agentLabel(agentOf(c.state))}</td>
                       <td>
                         <Status run={c} />
                       </td>
@@ -443,10 +446,10 @@ export default function BoardPage() {
             </strong>
             <p>
               {r.mode === "demo"
-                ? "Reproduza a demo: os agentes avançam as etapas e a Mola transporta os cards."
+                ? "Veja os exemplos avançarem: os agentes trabalham e a Mola leva cada caso para a próxima etapa."
                 : r.config.streamPath
-                  ? "Escutando os eventos enviados pelo backend."
-                  : "Acompanhando mudanças de estado pela consulta periódica."}
+                  ? "Acompanhando as atividades da equipe em tempo real."
+                  : "Atualizando as etapas dos casos automaticamente."}
             </p>
           </div>
           <label className="filter-control">
@@ -466,8 +469,8 @@ export default function BoardPage() {
           <span>
             <span className="live-dot" />
             {r.mode === "demo"
-              ? "Demonstração · arraste cards ou avance os eventos"
-              : "Estados definidos pelo backend"}
+              ? "Exemplos ilustrativos · arraste os casos ou avance as atividades"
+              : "Etapas atualizadas pelos agentes"}
           </span>
           <span>
             Concluído exige verificação · Falhas e bloqueios ficam em Atenção

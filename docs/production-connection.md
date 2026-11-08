@@ -1,6 +1,19 @@
 # Conectar o workspace ao backend
 
-Abra **Admin → Conexão**, informe a URL do backend e selecione **Produção**. A configuração fica neste navegador. Nenhum segredo deve ser colocado nos campos da interface.
+A escolha do ambiente e todos os endereços ficam exclusivamente no .env.local ou nas variáveis do deploy. Não há seletor de ambiente nem editor de configuração na interface. Configurações antigas em localStorage são ignoradas.
+
+Copie .env.example na primeira instalação e configure:
+
+```dotenv
+RESOLVEQA_MODE=production
+RESOLVEQA_API_URL=https://api.sua-empresa.com
+RESOLVEQA_CASE_IDS=case-1,case-2
+RESOLVEQA_SNAPSHOT_PATH=
+RESOLVEQA_EVENTS_PATH=
+RESOLVEQA_PLAYBOOKS_PATH=
+```
+
+Use demo explicitamente para exemplos locais. Sem RESOLVEQA_MODE, o padrão é production; valores desconhecidos são recusados. Reinicie o servidor ou refaça o build após mudar o arquivo. Somente esses seis campos públicos são permitidos no runtime; segredos continuam no servidor. A tela Conexão mostra apenas a situação do acompanhamento e a ação de atualizar.
 
 ## O que funciona com a API existente
 
@@ -16,7 +29,7 @@ Sem serviço de snapshot, o front consulta a cada cinco segundos os IDs cadastra
 
 ## Serviços adicionais: contrato proposto para o gateway
 
-As rotas abaixo são configuráveis, não são endpoints existentes presumidos. Deixe seus campos vazios até o backend implementá-las.
+As rotas abaixo são configuráveis, não são endpoints existentes presumidos. Deixe as variáveis opcionais vazias até o backend implementar as rotas.
 
 ### Snapshot de operação
 
@@ -86,6 +99,6 @@ O cadastro é efetivo no armazenamento local em **Demo**. Em **Produção**, só
 
 ## Demonstração e validação
 
-Demo e produção têm estados separados. Trocar o modo cancela timers, stream e animações pendentes. Desconexões são explícitas; dados antigos exibem o horário da última consulta e não são substituídos por exemplos.
+Demo e produção têm estados separados. O ambiente é fixado no servidor; o navegador não pode selecioná-lo nem substituir os endereços configurados. Desconexões são explícitas; dados antigos exibem o horário da última consulta e não são substituídos por exemplos.
 
 Testes de navegador exercitam a API de produção com respostas controladas localmente. Isso valida o adaptador e o transporte, **não comprova um backend remoto implantado ou instrumentado**.

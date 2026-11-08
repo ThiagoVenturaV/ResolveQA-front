@@ -17,3 +17,7 @@ Nome ResolveQA, interface Mola e personagem animado existente preservados. Refer
 Backend clonado em ../work/ResolveQA-backend; PRD, RFC-0001 e contratos Python lidos. Front existente em React/TypeScript Vinext. Atlas e transporte em components/mola e public/mascot.
 ## Workflow Approval
 Usuário aprovou explicitamente a primeira referência (entrada equilibrada entre Mola e Admin) e autorizou implementação em código e criação de PR.
+
+## Configuração e linguagem da interface
+
+Escolha entre exemplos e serviço real exclusivamente por RESOLVEQA_MODE no env. Nenhum seletor ou campo de configuração técnica na UI; configurações antigas de navegador não podem sobrepor o servidor. Termos técnicos recebem nomes e explicações úteis para a pessoa, com dados originais preservados.

@@ -5,7 +5,7 @@
     "CaseCreated descobre e consulta caso criado por agente remoto",
     "EvidenceAdded atualiza as evidências do caso",
     "Falha de backend mostra erro e identifica o último snapshot sem inventar dados",
-    "Troca de ambiente isola os dados e encerra o stream"
+    "Produção vem do env e ignora preferência de exemplos salva no navegador"
   ],
   "errors": [],
   "backend": "local controlled HTTP/SSE service; not a remote production activation"

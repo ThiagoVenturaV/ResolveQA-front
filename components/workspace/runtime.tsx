@@ -28,8 +28,6 @@ import {
 import {
   apiUrl,
   createCase,
-  defaultConfig,
-  connectionConfigSchema,
   deleteRemotePlaybook,
   fetchCase,
   fetchSnapshot,
@@ -39,13 +37,14 @@ import {
   type ConnectionConfig,
 } from "@/lib/resolveqa/client";
 
-type Mode = "demo" | "production";
+import { friendlyError } from "@/lib/resolveqa/copy";
+import type { RuntimeSettings } from "@/lib/resolveqa/environment";
 export type MotionJob = { key: string; before: Run; after: Run };
 const empty: Snapshot = { cases: [], events: [], spans: [], documents: [] };
 const KEY = "resolveqa.workspace.v2";
 type Runtime = {
   snapshot: Snapshot;
-  mode: Mode;
+  mode: RuntimeSettings["mode"];
   config: ConnectionConfig;
   ready: boolean;
   connection: string;
@@ -54,8 +53,6 @@ type Runtime = {
   playbooks: Playbook[];
   jobs: MotionJob[];
   lastSync: string;
-  setMode: (m: Mode) => void;
-  configure: (c: ConnectionConfig) => void;
   refresh: () => void;
   setPlaying: (p: boolean) => void;
   step: () => void;
@@ -77,9 +74,17 @@ export function useRuntime() {
   return ctx;
 }
 
-export function RuntimeProvider({ children }: { children: ReactNode }) {
-  const [mode, setModeState] = useState<Mode>("demo");
-  const [config, setConfig] = useState<ConnectionConfig>(defaultConfig);
+export function RuntimeProvider({
+  children,
+  settings,
+}: {
+  children: ReactNode;
+  settings: RuntimeSettings;
+}) {
+  const mode = settings.mode;
+  const [config, setConfig] = useState<ConnectionConfig>(settings.connection);
+  const initialConnection = useRef(settings.connection);
+  const watchedCases = useRef<Record<string, string[]>>({});
   const [snapshot, setSnapshot] = useState<Snapshot>(empty);
   const [playbooks, setPlaybooks] = useState<Playbook[]>([]);
   const [ready, setReady] = useState(false);
@@ -106,8 +111,7 @@ export function RuntimeProvider({ children }: { children: ReactNode }) {
       let saved: {
         demo?: unknown;
         playbooks?: unknown;
-        mode?: string;
-        config?: Partial<ConnectionConfig>;
+        watchedCases?: Record<string, unknown>;
       } = {};
       try {
         const value = JSON.parse(localStorage.getItem(KEY) || "{}");
@@ -125,28 +129,42 @@ export function RuntimeProvider({ children }: { children: ReactNode }) {
             .map((p) => p.data!)
         : demoPlaybooks;
       demoCache.current = { snapshot: demo, playbooks: pbs };
-      const restoredConfig = connectionConfigSchema.safeParse(saved.config);
-      if (restoredConfig.success) setConfig(restoredConfig.data);
-      const m = saved.mode === "production" ? "production" : "demo";
-      modeRef.current = m;
-      setModeState(m);
-      commit(m === "demo" ? demo : empty);
-      setPlaybooks(m === "demo" ? pbs : []);
-      setConnection(m === "demo" ? "Demonstração local" : "Desconectado");
+      const deployment = initialConnection.current;
+      const savedIds = saved.watchedCases?.[deployment.baseUrl];
+      const ids = Array.isArray(savedIds)
+        ? savedIds
+            .filter(
+              (id): id is string =>
+                typeof id === "string" && id.length > 0 && id.length <= 200,
+            )
+            .slice(0, 500)
+        : [];
+      watchedCases.current = { [deployment.baseUrl]: ids };
+      if (mode === "production" && ids.length)
+        setConfig({
+          ...deployment,
+          caseIds: [...new Set([...deployment.caseIds, ...ids])],
+        });
+      commit(mode === "demo" ? demo : empty);
+      setPlaybooks(mode === "demo" ? pbs : []);
+      setConnection(
+        mode === "demo" ? "Exemplos para explorar" : "Aguardando atualização",
+      );
       setReady(true);
     });
-  }, [commit]);
+  }, [commit, mode]);
   useEffect(() => {
     if (!ready) return;
     if (mode === "demo") demoCache.current = { snapshot, playbooks };
+    if (mode === "production")
+      watchedCases.current[config.baseUrl] = config.caseIds;
     try {
       localStorage.setItem(
         KEY,
         JSON.stringify({
-          mode,
-          config,
           demo: demoCache.current?.snapshot,
           playbooks: demoCache.current?.playbooks,
+          watchedCases: watchedCases.current,
         }),
       );
     } catch {
@@ -216,7 +234,7 @@ export function RuntimeProvider({ children }: { children: ReactNode }) {
     const poll = async () => {
       try {
         if (!config.baseUrl) {
-          setConnection("Configure o backend");
+          setConnection("Aguardando informações");
           return;
         }
         if (!current.current.cases.length) setConnection("Conectando");
@@ -231,17 +249,13 @@ export function RuntimeProvider({ children }: { children: ReactNode }) {
         setLastSync(new Date().toISOString());
         setConnection(
           source?.readyState === EventSource.OPEN
-            ? "Stream conectado"
-            : "Consulta a cada 5 s",
+            ? "Informações atualizadas"
+            : "Acompanhamento atualizado",
         );
       } catch (e) {
         if (!stopped) {
-          setError(
-            e instanceof Error
-              ? e.message
-              : "Não foi possível conectar ao backend.",
-          );
-          setConnection("Conexão interrompida");
+          setError(friendlyError(e));
+          setConnection("Atualizações interrompidas");
         }
       } finally {
         if (!stopped) timer = setTimeout(poll, 5000);
@@ -255,7 +269,7 @@ export function RuntimeProvider({ children }: { children: ReactNode }) {
           if (!stopped) setConnection("Stream conectado");
         };
         source.onerror = () => {
-          if (!stopped) setConnection("Reconectando stream · consulta ativa");
+          if (!stopped) setConnection("Retomando as atualizações");
         };
         const receive = (message: MessageEvent) => {
           chain = chain
@@ -311,10 +325,7 @@ export function RuntimeProvider({ children }: { children: ReactNode }) {
               setLastSync(new Date().toISOString());
             })
             .catch((e) => {
-              if (!stopped)
-                setError(
-                  `Evento recusado: ${e instanceof Error ? e.message : "payload inválido"}`,
-                );
+              if (!stopped) setError(friendlyError(e));
             });
         };
         source.onmessage = receive;
@@ -329,8 +340,7 @@ export function RuntimeProvider({ children }: { children: ReactNode }) {
           source.addEventListener(type, receive as EventListener);
       } catch (e) {
         queueMicrotask(() => {
-          if (!stopped)
-            setError(e instanceof Error ? e.message : "Stream inválido.");
+          if (!stopped) setError(friendlyError(e));
         });
       }
     }
@@ -357,22 +367,6 @@ export function RuntimeProvider({ children }: { children: ReactNode }) {
     const t = setInterval(step, 5500);
     return () => clearInterval(t);
   }, [playing, mode, step]);
-  const setMode = (m: Mode) => {
-    generation.current++;
-    if (mode === "demo")
-      demoCache.current = { snapshot: current.current, playbooks };
-    modeRef.current = m;
-    setModeState(m);
-    setPlaying(false);
-    setJobs([]);
-    setError("");
-    setLastSync("");
-    commit(m === "demo" ? demoCache.current?.snapshot || makeDemo() : empty);
-    setPlaybooks(
-      m === "demo" ? demoCache.current?.playbooks || demoPlaybooks : [],
-    );
-    setConnection(m === "demo" ? "Demonstração local" : "Conectando");
-  };
   const addCase = async (report: {
     client_id: string;
     repo_ref: string;
@@ -413,7 +407,7 @@ export function RuntimeProvider({ children }: { children: ReactNode }) {
         ts: run.created_at,
         source: "intake",
         type: "CaseCreated",
-        reason: "Relato criado na demonstração.",
+        reason: "Relato de exemplo criado.",
         evidence_refs: [],
       });
   };
@@ -421,7 +415,7 @@ export function RuntimeProvider({ children }: { children: ReactNode }) {
     const gen = generation.current;
     if (mode === "production" && !config.playbooksPath)
       throw new Error(
-        "Configure a API de playbooks antes de salvar em produção.",
+        "O cadastro de procedimentos ainda não está disponível. Fale com a equipe responsável.",
       );
     const saved =
       mode === "demo"
@@ -438,7 +432,9 @@ export function RuntimeProvider({ children }: { children: ReactNode }) {
     const gen = generation.current;
     if (mode === "production") {
       if (!config.playbooksPath)
-        throw new Error("API de playbooks não configurada.");
+        throw new Error(
+          "O cadastro de procedimentos ainda não está disponível. Fale com a equipe responsável.",
+        );
       await deleteRemotePlaybook(config, id);
     }
     if (gen === generation.current)
@@ -461,13 +457,6 @@ export function RuntimeProvider({ children }: { children: ReactNode }) {
         playbooks,
         jobs,
         lastSync,
-        setMode,
-        configure: (c) => {
-          generation.current++;
-          setJobs([]);
-          if (mode === "production") commit(empty);
-          setConfig(c);
-        },
         refresh: () => setRevision((r) => r + 1),
         setPlaying,
         step,

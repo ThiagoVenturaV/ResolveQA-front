@@ -1,3 +1,4 @@
+import { startProductionPreview } from "./preview-helper.mjs";
 import { chromium } from "playwright-core";
 import { createServer } from "node:http";
 import assert from "node:assert/strict";
@@ -63,6 +64,7 @@ const server = createServer((req, res) => {
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
 const address = server.address();
 const backend = `http://127.0.0.1:${address.port}`;
+const preview = await startProductionPreview(backend);
 const browser = await chromium.launch({
   ...(process.env.CHROME_PATH
     ? { executablePath: process.env.CHROME_PATH }
@@ -77,7 +79,7 @@ await context.addInitScript(
     localStorage.setItem(
       "resolveqa.workspace.v2",
       JSON.stringify({
-        mode: "production",
+        mode: "demo",
         config: {
           baseUrl: backend,
           caseIds: ["SSE-1"],
@@ -103,14 +105,12 @@ function emit(event) {
     res.write(`event: ${event.type}\ndata: ${JSON.stringify(event)}\n\n`);
 }
 try {
-  await page.goto(
-    `${process.env.RESOLVEQA_BASE_URL || "http://127.0.0.1:5173"}/quadro`,
-  );
+  await page.goto(`${preview.url}/quadro`);
   await page.locator('[data-run-id="SSE-1"]').waitFor();
   await page.waitForFunction(() =>
     document
       .querySelector(".connection-label")
-      ?.textContent.includes("Stream conectado"),
+      ?.textContent.includes("Informações atualizadas"),
   );
   check("SSE conecta e hidrata snapshot");
   cases[0] = { ...cases[0], state: "fixing", updated_at: ts() };
@@ -151,6 +151,12 @@ try {
     evidence_refs: [],
   });
   await page.locator('[data-lane="intake"] [data-run-id="SSE-2"]').waitFor();
+  await page.waitForFunction(() =>
+    Object.values(
+      JSON.parse(localStorage.getItem("resolveqa.workspace.v2")).watchedCases ||
+        {},
+    ).some((ids) => ids.includes("SSE-2")),
+  );
   check("CaseCreated descobre e consulta caso criado por agente remoto");
   emit({
     event_id: "proof-1",
@@ -163,7 +169,7 @@ try {
   });
   cases[0].evidence_ids = ["real-test-log"];
   await page.getByRole("button", { name: "Abrir SSE-1", exact: true }).click();
-  await page.getByText("real-test-log", { exact: true }).first().waitFor();
+  await page.locator('[data-evidence-id="real-test-log"]').waitFor();
   check("EvidenceAdded atualiza as evidências do caso");
   await page
     .getByRole("button", { name: "Fechar detalhes", exact: true })
@@ -172,17 +178,19 @@ try {
   await page
     .getByRole("button", { name: "Atualizar dados", exact: true })
     .click();
-  await page.getByRole("alert").filter({ hasText: "HTTP 503" }).waitFor();
+  await page
+    .getByRole("alert")
+    .filter({ hasText: "Não foi possível confirmar esta atualização" })
+    .waitFor();
   assert.equal(await page.locator(".live-card").count(), 2);
   check(
     "Falha de backend mostra erro e identifica o último snapshot sem inventar dados",
   );
-  await page.getByRole("button", { name: "Demo", exact: true }).click();
-  await page.waitForFunction(
-    () => document.querySelectorAll(".live-card").length === 8,
+  assert.equal(await page.locator(".mode-switch").count(), 0);
+  assert.equal(await page.locator('[data-run-id="SSE-1"]').count(), 1);
+  check(
+    "Produção vem do env e ignora preferência de exemplos salva no navegador",
   );
-  assert.equal(await page.locator('[data-run-id="SSE-1"]').count(), 0);
-  check("Troca de ambiente isola os dados e encerra o stream");
   assert.deepEqual(errors, []);
   await fs.mkdir(new URL("../.impeccable/review/", import.meta.url), {
     recursive: true,
@@ -203,6 +211,7 @@ try {
   console.log(JSON.stringify({ passed: checks.length, errors }));
 } finally {
   await browser.close();
+  preview.close();
   for (const res of streams) res.end();
   server.closeAllConnections();
   await new Promise((resolve) => server.close(resolve));

@@ -47,7 +47,7 @@ export default function LandingPage() {
             </div>
             <span className="hero-footnote">
               <BookOpen size={14} />
-              Documentação atualizada e playbooks da sua empresa.
+              Documentação atualizada e procedimentos da sua empresa.
             </span>
           </div>
           <div className="rq-hero-product">
@@ -114,8 +114,8 @@ export default function LandingPage() {
                   Admin
                 </h2>
                 <p>
-                  Execuções, logs, traces e playbooks. O contexto para decidir
-                  com segurança.
+                  Execuções, atividades, tempo por etapa e procedimentos. O
+                  contexto para decidir com segurança.
                 </p>
               </div>
               <Link className="rq-button small" href="/admin">
@@ -132,15 +132,15 @@ export default function LandingPage() {
             </Link>
           </article>
         </section>
-        <section className="rq-knowledge">
+        <section className="rq-knowledge" id="conhecimento">
           <div>
             <h2>
               A correção fica.
               <br />O conhecimento também.
             </h2>
             <p>
-              Documentação que acompanha a evolução do projeto. Playbooks que
-              levam o contexto da sua empresa para o fluxo dos agentes.
+              Documentação que acompanha a evolução do projeto. Os procedimentos
+              da sua empresa orientam o trabalho dos agentes.
             </p>
             <Link href="/admin" className="rq-text-link">
               Gerenciar no Admin
@@ -161,11 +161,10 @@ export default function LandingPage() {
             <article>
               <BookOpen size={20} />
               <div>
-                <h3>Playbooks da sua empresa</h3>
+                <h3>Playbooks: os procedimentos da sua empresa</h3>
                 <p>
-                  Cadastre procedimentos por empresa e repositório, com
-                  instruções para reprodução, correção, verificação e
-                  documentação.
+                  Cadastre procedimentos por empresa e projeto, com instruções
+                  para reprodução, correção, verificação e documentação.
                 </p>
               </div>
             </article>
@@ -173,25 +172,21 @@ export default function LandingPage() {
         </section>
         <div className="landing-disclosure">
           <span className="sample-label">
-            Prévias com dados de demonstração
+            Veja como o acompanhamento funciona
           </span>
           <p>
-            Explore o produto no modo demo. A conexão de produção usa os
-            serviços configurados no painel.
+            As prévias usam exemplos ilustrativos. Seus casos e resultados ficam
+            organizados em um só lugar.
           </p>
         </div>
       </main>
       <footer className="rq-footer">
         <Logo />
         <span>Autonomia para executar. Clareza para operar.</span>
-        <a
-          href="https://github.com/moouraajv/ResolveQA"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Projeto no GitHub
+        <Link href="/quadro">
+          Acompanhar os casos
           <ArrowRight size={14} />
-        </a>
+        </Link>
       </footer>
     </div>
   );

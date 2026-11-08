@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { Cable, Check, Save, X } from "lucide-react";
-import { apiUrl, type ConnectionConfig } from "@/lib/resolveqa/client";
+import { X } from "lucide-react";
+import { friendlyError } from "@/lib/resolveqa/copy";
 import { useRuntime } from "./runtime";
 
 export function NewCaseForm({ onClose }: { onClose: () => void }) {
@@ -31,9 +31,7 @@ export function NewCaseForm({ onClose }: { onClose: () => void }) {
       });
       onClose();
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Não foi possível criar o caso.",
-      );
+      setError(friendlyError(err));
     } finally {
       setSaving(false);
     }
@@ -68,13 +66,13 @@ export function NewCaseForm({ onClose }: { onClose: () => void }) {
           />
         </label>
         <label>
-          Repositório
+          Projeto
           <input
             name="repo"
             required
             maxLength={240}
             defaultValue={r.mode === "demo" ? "acme/checkout" : ""}
-            placeholder="organização/repositório"
+            placeholder="Nome do projeto"
           />
         </label>
         <label>
@@ -95,8 +93,8 @@ export function NewCaseForm({ onClose }: { onClose: () => void }) {
         )}
         <p className="form-note">
           {r.mode === "demo"
-            ? "Este caso ficará apenas na demonstração local."
-            : "O relato será enviado à API de casos configurada."}
+            ? "Este relato é um exemplo e não altera o trabalho da sua equipe."
+            : "Sua equipe poderá acompanhar este relato e as próximas etapas."}
         </p>
         <button
           className="rq-button primary"
@@ -108,164 +106,20 @@ export function NewCaseForm({ onClose }: { onClose: () => void }) {
     </dialog>
   );
 }
-export function ConnectionForm() {
+
+export function ConnectionStatus() {
   const r = useRuntime();
-  const [draft, setDraft] = useState<ConnectionConfig>(r.config);
-  const [ids, setIds] = useState(r.config.caseIds.join("\n"));
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
-  const field = (key: keyof ConnectionConfig, value: string) =>
-    setDraft((d) => ({ ...d, [key]: value }));
-  function submit(e: FormEvent) {
-    e.preventDefault();
-    setError("");
-    try {
-      apiUrl(draft, "/health");
-      for (const path of [
-        draft.snapshotPath,
-        draft.streamPath,
-        draft.playbooksPath,
-      ])
-        if (path) apiUrl(draft, path);
-      const next = {
-        ...draft,
-        baseUrl: draft.baseUrl.replace(/\/$/, ""),
-        caseIds: [
-          ...new Set(
-            ids
-              .split(/[\n,]/)
-              .map((x) => x.trim())
-              .filter(Boolean),
-          ),
-        ],
-      };
-      r.configure(next);
-      setMessage(
-        "Configuração salva. Selecione Produção para receber os dados reais.",
-      );
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Configuração inválida.");
-    }
-  }
   return (
-    <div className="connection-layout">
-      <form className="rq-form connection-form" onSubmit={submit}>
-        <h2>Conecte seu backend</h2>
-        <p>
-          Use a API de casos existente ou informe os serviços adicionais da sua
-          instalação.
-        </p>
-        <label>
-          URL do backend
-          <input
-            type="url"
-            required
-            placeholder="https://api.sua-empresa.com"
-            value={draft.baseUrl}
-            onChange={(e) => field("baseUrl", e.target.value.trim())}
-          />
-          <small>
-            Sem chaves ou segredos. A API deve permitir a origem deste front via
-            CORS.
-          </small>
-        </label>
-        <label>
-          IDs dos casos acompanhados
-          <textarea
-            rows={3}
-            placeholder="Um case_id por linha"
-            value={ids}
-            onChange={(e) => setIds(e.target.value)}
-          />
-          <small>
-            A API atual consulta casos por ID. Novos casos criados por este
-            front entram nesta lista.
-          </small>
-        </label>
-        <details>
-          <summary>Serviços adicionais (opcional)</summary>
-          <p>
-            Preencha apenas rotas implementadas pelo seu gateway. Esses
-            endpoints não existem no backend base consultado.
-          </p>
-          <label>
-            Snapshot de operação
-            <input
-              placeholder="/caminho-do-snapshot"
-              value={draft.snapshotPath}
-              onChange={(e) => field("snapshotPath", e.target.value.trim())}
-            />
-            <small>
-              Retorna casos, eventos, spans e referências de documentação.
-            </small>
-          </label>
-          <label>
-            Stream de eventos SSE
-            <input
-              placeholder="/caminho-dos-eventos"
-              value={draft.streamPath}
-              onChange={(e) => field("streamPath", e.target.value.trim())}
-            />
-            <small>
-              Criação e transições dos agentes acionam os movimentos da Mola.
-            </small>
-          </label>
-          <label>
-            API de playbooks
-            <input
-              placeholder="/caminho-dos-playbooks"
-              value={draft.playbooksPath}
-              onChange={(e) => field("playbooksPath", e.target.value.trim())}
-            />
-            <small>
-              Lista e grava os procedimentos da empresa. Contrato em
-              docs/production-connection.md.
-            </small>
-          </label>
-        </details>
-        {error && (
-          <p className="form-error" role="alert">
-            {error}
-          </p>
-        )}
-        {message && (
-          <p className="form-success" role="status">
-            <Check size={16} />
-            {message}
-          </p>
-        )}
-        <button className="rq-button primary">
-          <Save size={16} />
-          Salvar conexão
-        </button>
-      </form>
-      <aside className="connection-explainer">
-        <Cable size={28} />
-        <h3>Uma interface. Duas fontes.</h3>
-        <p>
-          <strong>Demo</strong> gera casos e transições sintéticos, com animação
-          e armazenamento local.
-        </p>
-        <p>
-          <strong>Produção</strong> lê a API configurada. Sem stream, consulta
-          os casos conhecidos a cada 5 segundos.
-        </p>
-        <ul>
-          <li>
-            Somente <code>verified</code> entra em Concluído.
-          </li>
-          <li>Bloqueios e falhas ficam em Atenção.</li>
-          <li>Sem telemetria recebida, os gráficos ficam vazios.</li>
-          <li>Tokens de origem permanecem no servidor.</li>
-        </ul>
-        <a
-          href="https://github.com/moouraajv/ResolveQA"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Consultar o backend no GitHub
-        </a>
-      </aside>
-    </div>
+    <section className="data-panel">
+      <h2>Acompanhamento da equipe</h2>
+      <p className="muted">{r.connection}</p>
+      <p>
+        As informações são atualizadas automaticamente. Se os casos não
+        aparecerem, tente atualizar ou peça ajuda à equipe responsável.
+      </p>
+      <button className="rq-button" onClick={r.refresh}>
+        Atualizar informações
+      </button>
+    </section>
   );
 }

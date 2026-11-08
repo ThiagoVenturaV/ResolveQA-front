@@ -31,34 +31,19 @@ import {
 } from "@/lib/resolveqa/domain";
 import { makeDemo } from "@/lib/resolveqa/demo";
 import { MolaSprite } from "@/components/mola/spring";
-import { useRuntime } from "./runtime";
+import {
+  agentLabel,
+  sourceLabel,
+  activityLabel,
+  explainText,
+  caseReason,
+} from "@/lib/resolveqa/copy";
 export function Logo() {
   return (
     <Link className="rq-logo" href="/" aria-label="ResolveQA, início">
       <Loop aria-hidden="true" size={32} />
       <span>ResolveQA</span>
     </Link>
-  );
-}
-export function ModeSwitch() {
-  const { mode, setMode, ready } = useRuntime();
-  return (
-    <div className="mode-switch" role="group" aria-label="Fonte dos dados">
-      <button
-        disabled={!ready}
-        aria-pressed={mode === "demo"}
-        onClick={() => setMode("demo")}
-      >
-        Demo
-      </button>
-      <button
-        disabled={!ready}
-        aria-pressed={mode === "production"}
-        onClick={() => setMode("production")}
-      >
-        Produção
-      </button>
-    </div>
   );
 }
 export function SiteNav() {
@@ -68,21 +53,12 @@ export function SiteNav() {
       <nav aria-label="Navegação principal">
         <Link href="/#produto">Produto</Link>
         <Link href="/#como-funciona">Como funciona</Link>
-        <a
-          href="https://github.com/moouraajv/ResolveQA"
-          target="_blank"
-          rel="noreferrer"
-        >
-          GitHub <ArrowRight size={13} className="external-arrow" />
-        </a>
+        <Link href="/#conhecimento">Para sua empresa</Link>
       </nav>
-      <div className="rq-header-end">
-        <span className="env-label">
-          <i />
-          Demo disponível
-        </span>
-        <ModeSwitch />
-      </div>
+      <Link className="rq-button small" href="/admin">
+        Acessar Admin
+        <ArrowRight size={14} />
+      </Link>
     </header>
   );
 }
@@ -114,7 +90,7 @@ export function Empty({
 export function SearchBox({
   value,
   onChange,
-  placeholder = "Buscar por ID, relato ou repositório…",
+  placeholder = "Buscar por caso, relato ou projeto…",
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -236,7 +212,7 @@ export function TraceWaterfall({ spans }: { spans: Span[] }) {
     <div className="trace-waterfall">
       {spans.map((s) => (
         <div className="span-row" key={s.id}>
-          <span title={s.name}>{s.name}</span>
+          <span title={explainText(s.name)}>{explainText(s.name)}</span>
           <div className="span-track">
             <div
               className={`span-bar span-${s.status}`}
@@ -270,10 +246,11 @@ export function EventRows({
         <div className="event-line" key={e.event_id}>
           <Clock value={e.ts} />
           <span className={`event-dot source-${e.source}`} />
-          <code>{e.source}</code>
+          <span>{sourceLabel(e.source)}</span>
           <span>
-            {e.reason || e.type}
-            {e.replay_of && ` · Replay de ${e.replay_of.original_ts}`}
+            {explainText(e.reason || activityLabel(e.type))}
+            {e.replay_of &&
+              ` · Revisão do histórico de ${e.replay_of.original_ts}`}
           </span>
         </div>
       ))}
@@ -292,7 +269,7 @@ export function BoardPreview({ hero = false }: { hero?: boolean }) {
           <Columns3 size={17} />
           Mola
         </span>
-        <span className="sample-label">Dados de demonstração</span>
+        <span className="sample-label">Exemplo de acompanhamento</span>
       </div>
       <div className="preview-lanes">
         {["intake", "active", "review", "done"].map((lane, i) => (
@@ -310,10 +287,10 @@ export function BoardPreview({ hero = false }: { hero?: boolean }) {
               .map((c) => (
                 <div className="preview-task" key={c.case_id}>
                   <code>{c.case_id}</code>
-                  <p>{c.report_text}</p>
+                  <p>{explainText(c.report_text)}</p>
                   <span>
                     <Code2 size={11} />
-                    {agentOf(c.state)}
+                    {agentLabel(agentOf(c.state))}
                     {c.state === "verified" && <Check size={11} />}
                   </span>
                 </div>
@@ -341,13 +318,13 @@ export function BoardPreview({ hero = false }: { hero?: boolean }) {
             <div className="preview-event" key={s}>
               <code>15:2{i}:04</code>
               <span className={`event-dot source-${s}`} />
-              <code>{s}</code>
+              <span>{sourceLabel(s)}</span>
               <span>
                 {
                   [
                     "Relato classificado · checkout",
-                    "Teste de reprodução confirmado",
-                    "Patch mínimo gerado · 1 arquivo",
+                    "Problema confirmado na verificação",
+                    "Correção proposta em um arquivo",
                     "Verificação independente aprovada",
                   ][i]
                 }
@@ -373,9 +350,9 @@ export function AdminPreview() {
         {[
           [Activity, "Visão geral"],
           [Play, "Execuções"],
-          [Terminal, "Logs"],
-          [GitBranch, "Traces"],
-          [BookOpen, "Playbooks"],
+          [Terminal, "Atividades"],
+          [GitBranch, "Tempo por etapa"],
+          [BookOpen, "Procedimentos"],
         ].map(([Icon, label]) => {
           const I = Icon as typeof Activity;
           return (
@@ -388,18 +365,18 @@ export function AdminPreview() {
       </div>
       <div className="mini-admin-main">
         <div className="preview-title">
-          <strong>Observabilidade</strong>
-          <span className="sample-label">Demonstração</span>
+          <strong>Acompanhamento</strong>
+          <span className="sample-label">Exemplo ilustrativo</span>
         </div>
         <div className="mini-chart">
-          <span>Latência do pipeline</span>
+          <span>Tempo de resolução</span>
           <LatencyChart runs={preview.cases} small />
         </div>
         <div className="mini-run-table">
           {preview.cases.slice(2, 6).map((c) => (
             <div key={c.case_id}>
               <code>{c.case_id}</code>
-              <span>{c.report_text}</span>
+              <span>{explainText(c.report_text)}</span>
               <Status run={c} />
             </div>
           ))}
@@ -449,19 +426,19 @@ export function CaseDetail({
         </button>
       </header>
       <Status run={run} />
-      <h2>{run.report_text}</h2>
+      <h2>{explainText(run.report_text)}</h2>
       <dl className="case-properties">
         <div>
           <dt>Empresa</dt>
           <dd>{run.client_id}</dd>
         </div>
         <div>
-          <dt>Repositório</dt>
+          <dt>Projeto</dt>
           <dd>{run.repo_ref}</dd>
         </div>
         <div>
           <dt>Etapa</dt>
-          <dd>{agentOf(run.state)}</dd>
+          <dd>{agentLabel(agentOf(run.state))}</dd>
         </div>
         <div>
           <dt>Atualização</dt>
@@ -474,43 +451,46 @@ export function CaseDetail({
           <dd>{run.attempts.fix}</dd>
         </div>
         <div>
-          <dt>Chamadas de LLM</dt>
+          <dt>Consultas ao assistente</dt>
           <dd>{run.attempts.llm_calls}</dd>
         </div>
       </dl>
       {run.terminal_reason && (
-        <p className="rq-alert">
-          {typeof run.terminal_reason === "string"
-            ? run.terminal_reason
-            : JSON.stringify(run.terminal_reason)}
-        </p>
+        <p className="rq-alert">{caseReason(run.terminal_reason)}</p>
       )}
       <h3>Evidências</h3>
       {run.evidence_ids.length ? (
         <ul className="evidence-list">
-          {run.evidence_ids.map((id) => (
-            <li key={id}>
+          {run.evidence_ids.map((id, i) => (
+            <li key={id} data-evidence-id={id}>
               <FileText size={14} />
-              <code>{id}</code>
+              <span>Comprovante {i + 1} registrado</span>
             </li>
           ))}
         </ul>
       ) : (
         <p className="muted">Nenhuma evidência recebida.</p>
       )}
-      <h3>Revisões</h3>
+      <h3>Histórico da correção</h3>
       <p className="revision-line">
         <GitBranch size={14} />
-        <code>{run.base_revision || "Sem revisão base"}</code>
+        <span>
+          {run.base_revision
+            ? "Versão original registrada"
+            : "Aguardando análise inicial"}
+        </span>
         <ArrowRight size={13} />
-        <code>{run.fix_revision || "Sem patch"}</code>
+        <span>
+          {run.fix_revision ? "Correção registrada" : "Aguardando correção"}
+        </span>
       </p>
-      <h3>Trace</h3>
+      <h3>Tempo gasto em cada etapa</h3>
       {spans.length ? (
         <TraceWaterfall spans={spans} />
       ) : (
         <p className="muted">
-          O backend ainda não enviou spans para este caso.
+          O tempo de cada etapa aparecerá quando o acompanhamento estiver
+          disponível.
         </p>
       )}
       <h3>Linha do tempo</h3>

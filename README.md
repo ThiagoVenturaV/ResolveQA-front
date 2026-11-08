@@ -10,7 +10,7 @@ Workspace para acompanhar a resolução de bugs por agentes: relato, reproduçã
 
 ## Rodar
 
-Requer Node.js 22.13+ e npm.
+Requer Node.js 22.13+ e npm. Na primeira instalação, copie .env.example para .env.local. O ambiente é escolhido exclusivamente por RESOLVEQA_MODE; não há seletor nem formulário de conexão na interface.
 
 ```sh
 npm ci
@@ -29,7 +29,7 @@ npm run start
 - Cadastro, edição, ativação/pausa e exclusão de playbooks em demonstração, com persistência no navegador.
 - Eventos de agentes criando casos e acionando o transporte dos cards. A fila de animação não define o estado de domínio.
 - Coluna **Atenção** para `needs_info`, `blocked` e `infra_error`; apenas `verified` entra em **Concluído**.
-- Troca explícita entre demonstração e produção, consulta periódica de casos e stream SSE configurável.
+- Ambiente definido somente no .env, com consulta periódica e recebimento automático das atividades.
 - Fontes Montserrat e Manrope hospedadas localmente, com licenças em `public/fonts`.
 
 - Uma mola arco-íris, com seis opções de matiz da mesma arte.
@@ -39,7 +39,7 @@ npm run start
 - Layout responsivo, navegação por teclado e redução de movimento conforme a preferência do sistema.
 - Pranchas e estudos anteriores preservados no repositório como histórico de arte.
 
-O quadro inicia em **modo demonstração**. Os casos, spans e documentos iniciais são ilustrativos. Em produção, o front depende de uma API real configurada e protegida pelo gateway da empresa. A criação/consulta de casos segue o backend `moouraajv/ResolveQA`; snapshot, SSE, spans e playbooks são extensões documentadas, ainda não encontradas nas branches auditadas. Não há merge, deploy, execução de agentes ou edição de documentação pelo navegador.
+O exemplo .env.example habilita **demo** explicitamente; sem RESOLVEQA_MODE, o padrão é **production**. Reinicie o servidor ou gere um novo build após mudar a configuração. Os casos, spans e documentos iniciais são ilustrativos. Em produção, o front depende de uma API real configurada e protegida pelo gateway da empresa. A criação/consulta de casos segue o backend `moouraajv/ResolveQA`; snapshot, SSE, spans e playbooks são extensões documentadas, ainda não encontradas nas branches auditadas. Não há merge, deploy, execução de agentes ou edição de documentação pelo navegador.
 
 ## Validação
 
@@ -57,7 +57,7 @@ npm run test:browser
 npm run test:stream
 ```
 
-`CHROME_PATH` seleciona um executável alternativo; `RESOLVEQA_BASE_URL` troca o endereço do front. O teste de stream abre uma API HTTP/SSE controlada em uma porta local efêmera. As verificações de produção usam serviços locais de teste e não representam ativação de um backend remoto.
+`CHROME_PATH` seleciona um executável alternativo; `RESOLVEQA_BASE_URL` troca o endereço do front. O teste de stream abre uma API HTTP/SSE controlada e um front separado com variáveis de produção, sem trocar o ambiente pela interface. As verificações de produção usam serviços locais de teste e não representam ativação de um backend remoto.
 
 ## Direção visual
 

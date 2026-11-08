@@ -1,4 +1,12 @@
 "use client";
+import {
+  agentLabel,
+  sourceLabel,
+  activityLabel,
+  resultLabel,
+  explainText,
+  friendlyError,
+} from "@/lib/resolveqa/copy";
 import { useCallback, useMemo, useState, type FormEvent } from "react";
 import {
   Activity,
@@ -28,10 +36,11 @@ import {
   Status,
   TraceWaterfall,
 } from "@/components/workspace/ui";
-import { ConnectionForm, NewCaseForm } from "@/components/workspace/forms";
+import { ConnectionStatus, NewCaseForm } from "@/components/workspace/forms";
 import { useRuntime } from "@/components/workspace/runtime";
 import {
   agentOf,
+  labels,
   duration,
   elapsed,
   laneOf,
@@ -58,7 +67,7 @@ export default function AdminPage() {
     () =>
       r.snapshot.cases.filter(
         (c) =>
-          `${c.case_id} ${c.report_text} ${c.repo_ref} ${c.client_id}`
+          `${c.case_id} ${explainText(c.report_text)} ${c.repo_ref} ${c.client_id}`
             .toLowerCase()
             .includes(query.toLowerCase()) &&
           (state === "all" || laneOf(c.state) === state) &&
@@ -113,14 +122,14 @@ export default function AdminPage() {
                     onClick={() => setSelected(c.case_id)}
                   >
                     <code>{c.case_id}</code>
-                    <span>{c.report_text}</span>
+                    <span>{explainText(c.report_text)}</span>
                   </button>
                   <small>{c.repo_ref}</small>
                 </td>
                 <td>
                   <span className="agent-label">
                     <Bot size={14} />
-                    {agentOf(c.state)}
+                    {agentLabel(agentOf(c.state))}
                   </span>
                 </td>
                 <td>
@@ -145,8 +154,8 @@ export default function AdminPage() {
       </div>
     ) : (
       <Empty title="Nenhuma execução encontrada">
-        Ajuste os filtros ou crie um relato. Em produção, configure a conexão e
-        os IDs dos casos.
+        Ajuste os filtros ou crie um relato. Os casos aparecerão quando sua
+        equipe iniciar o acompanhamento.
       </Empty>
     );
   function exportLogs() {
@@ -180,9 +189,9 @@ export default function AdminPage() {
                   {
                     overview: "O que está acontecendo. E o contexto para agir.",
                     runs: "Do relato à verificação, cada execução tem uma história.",
-                    logs: "Eventos estruturados, com origem e evidências.",
+                    logs: "Saiba o que aconteceu, quando e quem participou.",
                     traces: "Veja onde cada etapa consome tempo.",
-                    agents: "O trabalho distribuído pelas etapas do pipeline.",
+                    agents: "O trabalho dos agentes em cada etapa.",
                     playbooks:
                       "Os procedimentos da sua empresa, no contexto dos agentes.",
                     documents: "O conhecimento que acompanha cada correção.",
@@ -199,7 +208,7 @@ export default function AdminPage() {
                 onClick={() => r.setPlaying(!r.playing)}
               >
                 {r.playing ? <Pause size={14} /> : <Play size={14} />}
-                {r.playing ? "Pausar demo" : "Executar demo"}
+                {r.playing ? "Pausar exemplos" : "Acompanhar exemplos"}
               </button>
             )}
             {["overview", "runs"].includes(view) && (
@@ -217,12 +226,12 @@ export default function AdminPage() {
           !r.config.baseUrl &&
           view !== "connection" && (
             <div className="rq-alert">
-              Conecte seu backend para receber dados reais.{" "}
+              As informações da equipe ainda não estão disponíveis.{" "}
               <button
                 className="inline-action"
                 onClick={() => navigate("connection")}
               >
-                Configurar conexão <ArrowRight size={14} />
+                Ver acompanhamento <ArrowRight size={14} />
               </button>
             </div>
           )}
@@ -294,21 +303,21 @@ export default function AdminPage() {
               <div>
                 <span>
                   <Clock3 size={15} />
-                  Duração p95
+                  Tempo de resolução (95%)
                 </span>
                 <strong className="metric-duration">
                   {finished.length
                     ? elapsed(percentile(finished.map(duration), 0.95))
                     : "—"}
                 </strong>
-                <small>{finished.length} amostras · casos terminais</small>
+                <small>Tempo que cobre ao menos 95% dos casos encerrados</small>
               </div>
             </section>
             <div className="overview-grid">
               <section className="data-panel">
                 <div className="panel-heading">
                   <h2>Duração das execuções</h2>
-                  <span className="muted">Criação → estado terminal</span>
+                  <span className="muted">Do relato ao encerramento</span>
                 </div>
                 <LatencyChart runs={finished} />
               </section>
@@ -322,10 +331,10 @@ export default function AdminPage() {
                     (c) => agentOf(c.state) === agent,
                   ).length;
                   return (
-                    <div className="agent-pipeline-row" key={agent}>
+                    <div className="agent-pipeline-row" key={agentLabel(agent)}>
                       <span>
                         <Bot size={14} />
-                        {agent}
+                        {agentLabel(agent)}
                       </span>
                       <div>
                         <i
@@ -339,8 +348,7 @@ export default function AdminPage() {
                   );
                 })}
                 <p className="panel-footnote">
-                  Casos não terminais por etapa. Não representa heartbeat dos
-                  agentes.
+                  Casos ainda em andamento, distribuídos por etapa.
                 </p>
               </section>
             </div>
@@ -364,12 +372,12 @@ export default function AdminPage() {
             <div className="overview-grid bottom-grid">
               <section className="data-panel">
                 <div className="panel-heading">
-                  <h2>Eventos recentes</h2>
+                  <h2>Atividades recentes</h2>
                   <button
                     className="rq-text-link"
                     onClick={() => navigate("logs")}
                   >
-                    Abrir logs
+                    Ver atividades
                     <ArrowRight size={15} />
                   </button>
                 </div>
@@ -377,8 +385,7 @@ export default function AdminPage() {
                   <EventRows events={events} limit={4} />
                 ) : (
                   <Empty title="Nenhum evento recebido">
-                    O stream ou snapshot configurado fornece a trilha de
-                    eventos.
+                    As atividades aparecerão aqui assim que forem recebidas.
                   </Empty>
                 )}
               </section>
@@ -393,8 +400,10 @@ export default function AdminPage() {
                 >
                   <BookOpen size={21} />
                   <span>
-                    <strong>{r.playbooks.length} playbooks cadastrados</strong>
-                    <small>Procedimentos por empresa e repositório</small>
+                    <strong>
+                      {r.playbooks.length} procedimentos cadastrados
+                    </strong>
+                    <small>Guias organizados por empresa e projeto</small>
                   </span>
                   <ArrowRight size={17} />
                 </button>
@@ -422,7 +431,7 @@ export default function AdminPage() {
           <section className="data-panel">
             <div className="panel-heading">
               <h2>
-                Trilha de eventos{" "}
+                Histórico de atividades{" "}
                 <span className="count-badge">{events.length}</span>
               </h2>
               <div className="heading-actions">
@@ -443,7 +452,9 @@ export default function AdminPage() {
                       "delivery",
                       "reply",
                     ].map((s) => (
-                      <option key={s}>{s}</option>
+                      <option key={s} value={s}>
+                        {sourceLabel(s)}
+                      </option>
                     ))}
                   </select>
                 </label>
@@ -453,7 +464,7 @@ export default function AdminPage() {
                   onClick={exportLogs}
                 >
                   <ArrowDownToLine size={14} />
-                  Exportar JSON
+                  Baixar histórico
                 </button>
               </div>
             </div>
@@ -462,9 +473,9 @@ export default function AdminPage() {
                 <table className="log-table">
                   <thead>
                     <tr>
-                      <th>Horário / seq.</th>
+                      <th>Horário / ordem</th>
                       <th>Caso</th>
-                      <th>Origem / tipo</th>
+                      <th>Responsável / atividade</th>
                       <th>Evento</th>
                       <th>Evidências</th>
                     </tr>
@@ -474,7 +485,7 @@ export default function AdminPage() {
                       <tr key={e.event_id}>
                         <td>
                           <Clock value={e.ts} date />
-                          <small>seq. {e.seq}</small>
+                          <small>Ordem {e.seq}</small>
                         </td>
                         <td>
                           <button
@@ -485,24 +496,30 @@ export default function AdminPage() {
                           </button>
                         </td>
                         <td>
-                          <code>{e.source}</code>
-                          <small>{e.type}</small>
+                          <span>{sourceLabel(e.source)}</span>
+                          <small>{activityLabel(e.type)}</small>
                         </td>
                         <td>
-                          {e.reason || e.type}
+                          {explainText(e.reason || activityLabel(e.type))}
                           {e.to_state && (
                             <small>
-                              {e.from_state} → {e.to_state}
+                              {e.from_state ? labels[e.from_state] : "Recebido"}{" "}
+                              → {labels[e.to_state]}
                             </small>
                           )}
                           {e.replay_of && (
                             <small>
-                              Replay · origem {e.replay_of.original_ts}
+                              Revisão do histórico · origem{" "}
+                              {e.replay_of.original_ts}
                             </small>
                           )}
                         </td>
                         <td>
-                          <code>{e.evidence_refs.join(", ") || "—"}</code>
+                          <span>
+                            {e.evidence_refs.length
+                              ? `${e.evidence_refs.length} comprovante(s)`
+                              : "Sem comprovantes"}
+                          </span>
                         </td>
                       </tr>
                     ))}
@@ -510,9 +527,9 @@ export default function AdminPage() {
                 </table>
               </div>
             ) : (
-              <Empty title="Sem logs neste filtro">
-                Eventos do backend aparecem aqui com a origem e o horário
-                recebidos.
+              <Empty title="Nenhuma atividade neste filtro">
+                Veja aqui as atividades recebidas, com o responsável e o
+                horário.
               </Empty>
             )}
           </section>
@@ -520,10 +537,10 @@ export default function AdminPage() {
         {view === "traces" && (
           <section className="data-panel">
             <div className="panel-heading">
-              <h2>Trace da execução</h2>
+              <h2>Tempo por etapa</h2>
               {traceIds.length > 0 && (
                 <label className="filter-control">
-                  <span className="sr-only">Caso do trace</span>
+                  <span className="sr-only">Caso acompanhado</span>
                   <select
                     value={chosenTrace}
                     onChange={(e) => setTraceCase(e.target.value)}
@@ -538,17 +555,17 @@ export default function AdminPage() {
             {spans.length ? (
               <>
                 <p className="muted">
-                  {chosenTrace} · {spans.length} spans ·{" "}
+                  {chosenTrace} · {spans.length} etapas ·{" "}
                   {r.mode === "demo"
                     ? "tempos ilustrativos"
-                    : "spans recebidos do backend"}
+                    : "tempos registrados no acompanhamento"}
                 </p>
                 <TraceWaterfall spans={spans} />
                 <div className="table-scroll">
                   <table>
                     <thead>
                       <tr>
-                        <th>Span</th>
+                        <th>Etapa</th>
                         <th>Início</th>
                         <th>Duração</th>
                         <th>Resultado</th>
@@ -557,15 +574,10 @@ export default function AdminPage() {
                     <tbody>
                       {spans.map((s) => (
                         <tr key={s.id}>
-                          <td>
-                            {s.name}
-                            <small>
-                              <code>{s.id}</code>
-                            </small>
-                          </td>
+                          <td>{explainText(s.name)}</td>
                           <td>{elapsed(s.start_ms)}</td>
                           <td>{elapsed(s.duration_ms)}</td>
-                          <td>{s.status}</td>
+                          <td>{resultLabel(s.status)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -574,11 +586,11 @@ export default function AdminPage() {
               </>
             ) : (
               <Empty
-                title="Nenhum span recebido"
+                title="O tempo por etapa ainda não está disponível"
                 icon={<GitBranch size={28} />}
               >
-                Configure um snapshot com spans para investigar a duração de
-                cada etapa. Eventos de estado não são spans.
+                Assim que os tempos forem recebidos, você poderá ver quanto cada
+                etapa levou.
               </Empty>
             )}
           </section>
@@ -605,7 +617,7 @@ export default function AdminPage() {
                       <td>
                         <span className="agent-label">
                           <Bot size={18} />
-                          {a}
+                          {agentLabel(a)}
                         </span>
                       </td>
                       <td>
@@ -613,8 +625,8 @@ export default function AdminPage() {
                           [
                             "Classificar relatos e coletar contexto",
                             "Criar teste que reproduz o defeito",
-                            "Propor correção mínima",
-                            "Verificar RED, GREEN e a suíte",
+                            "Preparar uma correção com o menor impacto possível",
+                            "Confirmar que o problema foi resolvido e conferir as demais verificações",
                           ][i]
                         }
                       </td>
@@ -630,8 +642,8 @@ export default function AdminPage() {
               </table>
             </div>
             <p className="panel-footnote">
-              A presença online dos agentes depende de telemetria de heartbeat,
-              ainda não fornecida pelo backend base.
+              Esta lista mostra os casos em cada etapa. A disponibilidade dos
+              agentes aparecerá quando essa informação for recebida.
             </p>
           </section>
         )}
@@ -643,8 +655,8 @@ export default function AdminPage() {
               <FileText size={18} />
             </div>
             <p className="muted">
-              Referências enviadas pelos agentes. A atualização dos arquivos
-              acontece no repositório, pelo backend.
+              Veja o que foi documentado pelos agentes e qual caso originou cada
+              atualização.
             </p>
             {r.snapshot.documents.length ? (
               r.snapshot.documents.map((d) => (
@@ -652,8 +664,10 @@ export default function AdminPage() {
                   <FileText size={22} />
                   <div>
                     <h3>{d.title}</h3>
-                    <code>{d.path}</code>
-                    <p>{d.summary}</p>
+                    <span className="muted">
+                      Documento atualizado pela equipe
+                    </span>
+                    <p>{explainText(d.summary)}</p>
                     <span>
                       <button
                         className="inline-action"
@@ -668,19 +682,21 @@ export default function AdminPage() {
               ))
             ) : (
               <Empty title="Nenhuma referência de documentação">
-                O snapshot de produção pode enviar os documentos alterados e o
-                caso que originou a atualização.
+                Os documentos atualizados aparecerão aqui junto ao caso que
+                motivou a mudança.
               </Empty>
             )}
           </section>
         )}
-        {view === "connection" && <ConnectionForm />}
+        {view === "connection" && <ConnectionStatus />}
         <footer className="app-footnote">
           <span>
             <span className="live-dot" />
-            {r.mode === "demo" ? "Dados de demonstração" : r.connection}
+            {r.mode === "demo" ? "Exemplos ilustrativos" : r.connection}
           </span>
-          <span>Horários em Fortaleza (UTC−3) · Merge com revisão humana</span>
+          <span>
+            Horários em Fortaleza (UTC−3) · Alterações revisadas pela equipe
+          </span>
         </footer>
       </main>
       {detail && (
@@ -729,11 +745,11 @@ function Playbooks() {
       setEditing(null);
       setMessage(
         r.mode === "demo"
-          ? "Playbook salvo na demonstração local."
-          : "Playbook confirmado pela API.",
+          ? "Procedimento de exemplo salvo neste navegador."
+          : "Procedimento salvo para a equipe.",
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível salvar.");
+      setError(friendlyError(err));
     } finally {
       setBusy(false);
     }
@@ -743,11 +759,9 @@ function Playbooks() {
     try {
       await r.removePlaybook(id);
       setDeleting(null);
-      setMessage("Playbook excluído.");
+      setMessage("Procedimento excluído.");
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Não foi possível excluir.",
-      );
+      setError(friendlyError(err));
     } finally {
       setBusy(false);
     }
@@ -758,7 +772,7 @@ function Playbooks() {
         <SearchBox
           value={query}
           onChange={setQuery}
-          placeholder="Buscar playbook ou empresa…"
+          placeholder="Buscar procedimento ou empresa…"
         />
         <button
           className="rq-button primary"
@@ -766,13 +780,13 @@ function Playbooks() {
           onClick={start}
         >
           <Plus size={16} />
-          Novo playbook
+          Novo procedimento
         </button>
       </div>
       {!writable && (
         <p className="rq-alert">
-          A API de playbooks não está configurada. Configure o serviço em
-          Conexão para cadastrar em produção.
+          O cadastro de procedimentos ainda não está disponível. Peça ajuda à
+          equipe responsável.
         </p>
       )}
       {message && (
@@ -810,7 +824,9 @@ function Playbooks() {
                     {p.enabled ? "Ativo" : "Pausado"} ·{" "}
                     <Clock value={p.updated_at} date />
                   </small>
-                  <p className="playbook-excerpt">{p.instructions}</p>
+                  <p className="playbook-excerpt">
+                    {explainText(p.instructions)}
+                  </p>
                   <div className="heading-actions">
                     <button
                       className="rq-button small"
@@ -820,11 +836,11 @@ function Playbooks() {
                         setError("");
                       }}
                     >
-                      Editar playbook
+                      Editar procedimento
                     </button>
                     {deleting === p.id ? (
                       <>
-                        <span>Excluir este playbook?</span>
+                        <span>Excluir este procedimento?</span>
                         <button
                           className="rq-button danger small"
                           disabled={busy}
@@ -855,11 +871,11 @@ function Playbooks() {
             ))}
           {!r.playbooks.length && (
             <Empty
-              title="Seu primeiro playbook começa aqui"
+              title="Organize o primeiro procedimento da sua equipe"
               icon={<BookOpen size={28} />}
             >
               Cadastre o contexto e os procedimentos que os agentes devem seguir
-              em cada repositório.
+              em cada projeto.
             </Empty>
           )}
         </section>
@@ -868,8 +884,8 @@ function Playbooks() {
             <div className="panel-heading">
               <h2>
                 {r.playbooks.some((p) => p.id === editing.id)
-                  ? "Editar playbook"
-                  : "Novo playbook"}
+                  ? "Editar procedimento"
+                  : "Novo procedimento"}
               </h2>
               <button
                 type="button"
@@ -884,7 +900,7 @@ function Playbooks() {
               [
                 ["name", "Nome"],
                 ["company", "Empresa"],
-                ["repository", "Repositório"],
+                ["repository", "Projeto"],
               ] as const
             ).map(([key, label]) => (
               <label key={key}>
@@ -920,11 +936,11 @@ function Playbooks() {
                   setEditing({ ...editing, enabled: e.target.checked })
                 }
               />
-              Playbook ativo
+              Procedimento ativo
             </label>
             <button className="rq-button primary" disabled={busy || !writable}>
               <Save size={16} />
-              {busy ? "Salvando…" : "Salvar playbook"}
+              {busy ? "Salvando…" : "Salvar procedimento"}
             </button>
           </form>
         )}

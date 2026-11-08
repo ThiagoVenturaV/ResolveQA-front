@@ -49,8 +49,6 @@ spacing:
 components:
   status:
     padding: '3px 7px'
-  mode-switch:
-    padding: '3px'
   button-primary:
     backgroundColor: '{colors.accent}'
     textColor: '#fffaf5'
@@ -128,7 +126,7 @@ Landing centralizada com limite (1600px), margem interna horizontal (34px), depo
 
 Aplicação usa lateral (216px) e conteúdo flexível; cabeçalho (67px). Conteúdo tem limite (1700px) e margem interna (30px). Navegação muda no responsivo; filtros e ações quebram linha. Tabelas preservam rolagem local e a aplicação contém vazamento horizontal. Quadro tem cinco colunas `repeat(5, minmax(190px, 1fr))`, intervalo (13px), rolagem horizontal e encaixe por proximidade.
 
-**The Evidence Hierarchy Rule.** Separe contexto, ações, indicadores e dados por alinhamento e divisórias; mantenha busca, ambiente e detalhes disponíveis no responsivo.
+**The Evidence Hierarchy Rule.** Separe contexto, ações, indicadores e dados por alinhamento e divisórias; mantenha busca, acompanhamento e detalhes disponíveis no responsivo.
 
 ## Elevation & Depth
 
@@ -146,7 +144,7 @@ Botão padrão com altura mínima (43px), peso (650) e variante compacta (35px).
 
 ### Chips
 
-Estado une texto, ícone e fundo tonal. Admin usa conclusão e entrada em cinza, atividade/revisão em tons quentes e atenção terracota. Demo tem etiqueta explícita; cor não é a única indicação de ambiente.
+Estado une texto, ícone e fundo tonal. Admin usa conclusão e entrada em cinza, atividade/revisão em tons quentes e atenção terracota. Exemplos ilustrativos são identificados sem expor termos de configuração.
 
 ### Cards / Containers
 
@@ -158,7 +156,7 @@ Campos têm rótulo associado, preenchimento sólido e borda; busca incorpora í
 
 ### Navigation
 
-Landing usa navegação horizontal e acessos diretos à Mola e ao Admin. Aplicação usa lateral agrupada e seleção visível. Alternância Demo/Produção usa grupo rotulado e `aria-pressed`. Foco visível global: contorno laranja de (3px), deslocado (3px); busca tem contorno próprio de (2px).
+Landing usa navegação horizontal e acessos diretos à Mola e ao Admin. Aplicação usa lateral agrupada e seleção visível. Não renderizar seletor Demo/Produção: o ambiente e os endereços são definidos exclusivamente no .env. Foco visível global: contorno laranja de (3px), deslocado (3px); busca tem contorno próprio de (2px).
 
 ### Mola e detalhes
 
@@ -178,3 +176,7 @@ Mola transporta card entre colunas em resposta a eventos e retorna ao repouso. A
 - **Don't** apresente dados de demonstração como operação remota comprovada.
 
 Não canonizado: microtipografia de prévias comprimidas e ajustes pontuais de composição não são tokens gerais. A avaliação final informada aprovou as sete correções materiais; a diferença numérica de hero (75,22%) é registro de revisão, não regra visual nem alegação de paridade pixel a pixel.
+
+## Linguagem da interface
+
+Atividades explica o histórico antes chamado Logs; Tempo por etapa apresenta o detalhamento antes chamado Traces. Projeto substitui repositório. Procedimentos explica os playbooks da empresa. Não apresentar códigos de erro, nomes de variáveis, hashes ou configuração de serviços nas jornadas; dados originais continuam preservados para integração.

@@ -1,6 +1,7 @@
 {
   "checks": [
     "Landing contém documentação e playbooks",
+    "Landing sem seletor de ambiente ou linguagem de configuração",
     "Landing mobile sem overflow horizontal",
     "Admin abre painel com execuções",
     "Admin preto com contraste legível",
@@ -15,16 +16,13 @@
     "Criação de caso no quadro",
     "Detalhes fecham com Escape",
     "Quadro mobile rola dentro do Kanban",
-    "Produção limpa dados demo",
-    "Consulta de produção usa contrato real",
-    "Mudança recebida da API aciona transporte em produção",
-    "Demo restaurada sem misturar produção",
-    "Armazenamento inválido recupera a demonstração"
+    "Armazenamento inválido recupera a demonstração",
+    "Preferência antiga não sobrepõe o env"
   ],
   "errors": [],
   "viewports": [
     "1536x1024",
     "390x844"
   ],
-  "production": "API mocked locally; no real remote backend activation"
+  "configuration": "Demo from env; stored mode/config cannot override it. Production validated separately by test:stream."
 }

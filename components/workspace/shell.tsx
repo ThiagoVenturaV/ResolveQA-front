@@ -17,15 +17,15 @@ import {
   Terminal,
 } from "lucide-react";
 import type { ReactNode } from "react";
-import { Logo, ModeSwitch } from "./ui";
+import { Logo } from "./ui";
 import { useRuntime } from "./runtime";
 export const adminViews = [
   { id: "overview", label: "Visão geral", icon: LayoutDashboard },
   { id: "runs", label: "Execuções", icon: ListChecks },
-  { id: "logs", label: "Logs", icon: Terminal },
-  { id: "traces", label: "Traces", icon: GitBranch },
+  { id: "logs", label: "Atividades", icon: Terminal },
+  { id: "traces", label: "Tempo por etapa", icon: GitBranch },
   { id: "agents", label: "Agentes", icon: Bot },
-  { id: "playbooks", label: "Playbooks", icon: BookOpen },
+  { id: "playbooks", label: "Procedimentos", icon: BookOpen },
   { id: "documents", label: "Documentação", icon: FileText },
   { id: "connection", label: "Conexão", icon: Cable },
 ];
@@ -49,10 +49,10 @@ export function WorkspaceShell({
           <span className="workspace-monogram">RQ</span>
           <div>
             <strong>ResolveQA</strong>
-            <span>Agent workspace</span>
+            <span>Central de acompanhamento</span>
           </div>
         </div>
-        <span className="sidebar-caption">Workspace</span>
+        <span className="sidebar-caption">Área de trabalho</span>
         <nav aria-label="Ambientes">
           <Link className={view === "board" ? "selected" : ""} href="/quadro">
             <Columns3 size={17} />
@@ -91,12 +91,12 @@ export function WorkspaceShell({
             <strong>
               {r.mode === "demo"
                 ? "Um ambiente para explorar"
-                : "Backend configurado"}
+                : "Acompanhamento da equipe"}
             </strong>
             <p>
               {r.mode === "demo"
-                ? "Dados sintéticos. Nenhuma alteração é enviada aos agentes."
-                : "A operação reflete os dados recebidos dos serviços configurados."}
+                ? "Explore exemplos de como os casos avançam entre as etapas."
+                : "Acompanhe o trabalho dos agentes e os resultados de cada caso."}
             </p>
           </div>
           <Link href="/">
@@ -117,7 +117,6 @@ export function WorkspaceShell({
               <i />
               {r.connection}
             </span>
-            <ModeSwitch />
             <button
               className="rq-icon-button"
               aria-label="Atualizar dados"
@@ -130,8 +129,8 @@ export function WorkspaceShell({
         {r.mode === "demo" && (
           <div className="environment-bar">
             <span className="live-dot" />
-            Demonstração · dados sintéticos salvos neste navegador
-            <span>Explore. Nada é enviado ao backend.</span>
+            Exemplos ilustrativos para explorar o acompanhamento
+            <span>Os exemplos não alteram o trabalho da sua equipe.</span>
           </div>
         )}
         {r.error && (
@@ -140,14 +139,14 @@ export function WorkspaceShell({
             <span>
               {r.lastSync
                 ? `Dados da última consulta: ${new Date(r.lastSync).toLocaleTimeString("pt-BR")}.`
-                : "Nenhum dado de produção foi confirmado."}
+                : "Ainda não recebemos informações atualizadas."}
             </span>
             <button onClick={r.refresh}>Tentar novamente</button>
           </div>
         )}
         {!r.ready ? (
           <div className="app-loading" role="status">
-            Preparando workspace…
+            Preparando seu espaço…
           </div>
         ) : (
           children
