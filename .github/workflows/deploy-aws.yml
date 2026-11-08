@@ -1,0 +1,57 @@
+name: Deploy AWS (frontend)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: deploy-aws-frontend
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: aws-prod
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build AWS export
+        run: npm run build:aws
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to CloudFront/S3
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: npm run deploy:aws -- "" "${{ secrets.AWS_REGION }}" "${{ secrets.AWS_STACK_NAME }}"
+
+      - name: Smoke SiteUrl
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          STACK: ${{ secrets.AWS_STACK_NAME }}
+        run: |
+          set -euo pipefail
+          url=$(aws cloudformation describe-stacks --stack-name "$STACK" \
+            --query "Stacks[0].Outputs[?OutputKey=='SiteUrl'].OutputValue | [0]" --output text)
+          echo "SiteUrl=$url"
+          code=$(curl -sS -o /tmp/front-smoke.html -w '%{http_code}' "$url")
+          test "$code" = "200"
