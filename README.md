@@ -2,6 +2,18 @@
 
 Frontend experimental para acompanhar trabalho em um Kanban com uma mola de brinquedo em pixel art. A mola transporta os cards entre **A fazer**, **Em andamento** e **Concluído**.
 
+## Demo pública (AWS)
+
+| Superfície | URL |
+|---|---|
+| Front (CloudFront) | https://d10ry6ff7l79jo.cloudfront.net |
+| Quadro | https://d10ry6ff7l79jo.cloudfront.net/quadro |
+| Admin | https://d10ry6ff7l79jo.cloudfront.net/admin |
+| Backend ResolveQA | https://d2f79ulrlhg51j.cloudfront.net |
+| Backend health | https://d2f79ulrlhg51j.cloudfront.net/health |
+
+Stack do front: `resolveqa-frontend`. Deploy via `infra/aws` / CI na `main`. O Admin pode carregar custo LLM (USD estimate) de `GET {backend}/api/cases/<case_id>/usage` quando o endpoint existir no deploy.
+
 ## Rodar
 
 Requer Node.js 22.13+ e npm.
@@ -45,11 +57,14 @@ O personagem usa um atlas gerado por estado, baseado no desenho da primeira pran
 
 ## Fonte
 
-- `app/page.tsx`: estado do quadro e interações.
+- `app/quadro/page.tsx`: estado do quadro e interações.
+- `app/admin/page.tsx`: métricas locais + painel de custo LLM (USD estimate).
 - `app/globals.css`: composição, responsividade e movimento.
 - `components/mola/`: atlas, física, palco interativo e transporte.
 - `public/moodboards/`: pranchas PNG em resolução original.
 - [Contrato de snapshot](docs/snapshots.md): formato de intercâmbio local.
 - [Direção visual](docs/art-direction.md): decisões e contexto.
+- [AWS frontend](infra/aws/README.md): export estático + CloudFront.
 
 Implementado com React, TypeScript e Vinext/Vite. O starter inclui a configuração de publicação privada pelo Sites; não há credenciais de GitHub no cliente.
+

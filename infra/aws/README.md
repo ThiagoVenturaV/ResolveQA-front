@@ -2,6 +2,17 @@
 
 The Mola frontend exports to static HTML/JS. This deployment serves the current demo and browser-local Kanban data; it does not publish a backend API.
 
+## Live demo
+
+| Surface | URL |
+|---|---|
+| Site (CloudFront) | https://d10ry6ff7l79jo.cloudfront.net |
+| Quadro | https://d10ry6ff7l79jo.cloudfront.net/quadro |
+| Admin | https://d10ry6ff7l79jo.cloudfront.net/admin |
+| Backend (separate stack) | https://d2f79ulrlhg51j.cloudfront.net |
+
+Stack name: `resolveqa-frontend`. Backend demo stack: `resolveqa-demo-backend`.
+
 ```sh
 npm run build:aws
 # Optional: export AWS_PROFILE and AWS_REGION, or rely on the default credential chain.

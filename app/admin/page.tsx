@@ -25,7 +25,7 @@ const KEY = "mola.workspace.v1";
 const USAGE_KEY = "mola.usage.v1";
 const USAGE_PREF_KEY = "mola.usage.prefs.v1";
 const agents: Agent[] = ["Codex", "cursor", "Antigravity"];
-const DEFAULT_API_BASE = "http://127.0.0.1:8080";
+const DEFAULT_API_BASE = "https://d2f79ulrlhg51j.cloudfront.net";
 
 function readUsageSnapshot(): UsageSnapshot | null {
   try {
