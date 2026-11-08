@@ -30,7 +30,21 @@ jobs:
         run: npm ci
 
       - name: Build AWS export
-        run: npm run build:aws
+        env:
+          # Bake public connection settings into the static export.
+          RESOLVEQA_MODE: production
+          RESOLVEQA_API_URL: ${{ vars.RESOLVEQA_API_URL }}
+          RESOLVEQA_CASE_IDS: ${{ vars.RESOLVEQA_CASE_IDS }}
+          RESOLVEQA_SNAPSHOT_PATH: ${{ vars.RESOLVEQA_SNAPSHOT_PATH }}
+          RESOLVEQA_EVENTS_PATH: ${{ vars.RESOLVEQA_EVENTS_PATH }}
+          RESOLVEQA_PLAYBOOKS_PATH: ${{ vars.RESOLVEQA_PLAYBOOKS_PATH }}
+        run: |
+          set -euo pipefail
+          if [ -z "${RESOLVEQA_API_URL:-}" ]; then
+            echo "Missing repository variable RESOLVEQA_API_URL (public backend base URL)." >&2
+            exit 1
+          fi
+          npm run build:aws
 
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
@@ -43,10 +57,11 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: npm run deploy:aws -- "" "${{ secrets.AWS_REGION }}" "${{ secrets.AWS_STACK_NAME }}"
 
-      - name: Smoke SiteUrl
+      - name: Smoke SiteUrl + backend health via baked API
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           STACK: ${{ secrets.AWS_STACK_NAME }}
+          RESOLVEQA_API_URL: ${{ vars.RESOLVEQA_API_URL }}
         run: |
           set -euo pipefail
           url=$(aws cloudformation describe-stacks --stack-name "$STACK" \
@@ -54,3 +69,23 @@ jobs:
           echo "SiteUrl=$url"
           code=$(curl -sS -o /tmp/front-smoke.html -w '%{http_code}' "$url")
           test "$code" = "200"
+          admin=$(curl -sS -o /tmp/front-admin.html -w '%{http_code}' "$url/admin")
+          test "$admin" = "200"
+          api="${RESOLVEQA_API_URL%/}"
+          health=$(curl -sS -o /tmp/back-health.json -w '%{http_code}' "$api/health")
+          test "$health" = "200"
+          # Static export may inline the API base only inside JS chunks.
+          curl -sS "$url" -o /tmp/front-index.html
+          found=0
+          if grep -F "$api" /tmp/front-index.html /tmp/front-admin.html >/dev/null; then
+            found=1
+          else
+            while IFS= read -r s; do
+              curl -sS "$url$s" -o /tmp/chunk.js
+              if grep -F "$api" /tmp/chunk.js >/dev/null; then
+                found=1
+                break
+              fi
+            done < <(grep -oE '/_next/static/[^"]+\.js' /tmp/front-index.html | head -20)
+          fi
+          test "$found" = "1"
