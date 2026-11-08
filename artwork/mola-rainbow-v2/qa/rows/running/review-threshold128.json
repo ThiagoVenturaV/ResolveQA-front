@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "frames_root": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128",
+  "frames_root": "artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128",
   "states": [
     "running"
   ],
@@ -18,7 +18,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/00.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14508,
@@ -33,7 +33,7 @@
         },
         {
           "index": 1,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/01.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13907,
@@ -48,7 +48,7 @@
         },
         {
           "index": 2,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/02.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13080,
@@ -63,7 +63,7 @@
         },
         {
           "index": 3,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/03.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14134,
@@ -78,7 +78,7 @@
         },
         {
           "index": 4,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/04.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15435,
@@ -93,7 +93,7 @@
         },
         {
           "index": 5,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/05.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14357,

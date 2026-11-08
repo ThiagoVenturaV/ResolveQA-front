@@ -1,6 +1,6 @@
 {
   "ok": false,
-  "frames_root": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames",
+  "frames_root": "artwork/mola-rainbow-v2/qa/rows/running/frames",
   "states": [
     "running"
   ],
@@ -22,7 +22,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames/running/00.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running/frames/running/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14599,
@@ -37,7 +37,7 @@
         },
         {
           "index": 1,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames/running/01.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running/frames/running/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13990,
@@ -52,7 +52,7 @@
         },
         {
           "index": 2,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames/running/02.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running/frames/running/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13132,
@@ -67,7 +67,7 @@
         },
         {
           "index": 3,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames/running/03.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running/frames/running/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14213,
@@ -82,7 +82,7 @@
         },
         {
           "index": 4,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames/running/04.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running/frames/running/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15518,
@@ -97,7 +97,7 @@
         },
         {
           "index": 5,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames/running/05.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running/frames/running/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14430,

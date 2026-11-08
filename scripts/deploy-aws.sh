@@ -1,12 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
+# Profile: optional CLI arg, else AWS_PROFILE, else default credential chain (no --profile).
 profile="${1:-${AWS_PROFILE:-}}"
-region="${2:-us-east-1}"
+region="${2:-${AWS_REGION:-us-east-1}}"
 stack="${3:-resolveqa-frontend}"
-aws_cmd=(aws --profile "$profile" --region "$region" --no-cli-pager)
+if [[ -n "$profile" ]]; then
+  aws_cmd=(aws --profile "$profile" --region "$region" --no-cli-pager)
+else
+  aws_cmd=(aws --region "$region" --no-cli-pager)
+fi
 test -f out/index.html || { echo 'Run npm run build:aws first.' >&2; exit 1; }
-"${aws_cmd[@]}" sts get-caller-identity --query '{Account:Account,Arn:Arn}'
+# Validate credentials without printing Account/Arn identity metadata.
+"${aws_cmd[@]}" sts get-caller-identity >/dev/null
+echo 'AWS credentials validated.'
 "${aws_cmd[@]}" cloudformation deploy \
   --template-file infra/aws/frontend.json --stack-name "$stack" \
   --no-fail-on-empty-changeset --tags Project=ResolveQA Component=frontend

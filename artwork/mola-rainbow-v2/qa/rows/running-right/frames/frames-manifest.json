@@ -13,14 +13,14 @@
     {
       "state": "running-right",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/03.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/04.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/05.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/06.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/07.png"
+        "artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/00.png",
+        "artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/01.png",
+        "artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/02.png",
+        "artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/03.png",
+        "artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/04.png",
+        "artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/05.png",
+        "artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/06.png",
+        "artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/07.png"
       ],
       "method": "components"
     }

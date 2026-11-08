@@ -4,8 +4,10 @@ The Mola frontend exports to static HTML/JS. This deployment serves the current 
 
 ```sh
 npm run build:aws
-aws login  --region us-east-1
-npm run deploy:aws -- resolveqa us-east-1 resolveqa-frontend
+# Optional: export AWS_PROFILE and AWS_REGION, or rely on the default credential chain.
+# Quiet STS check (no Account/Arn printed):
+aws sts get-caller-identity --region "${AWS_REGION:-us-east-1}" >/dev/null
+npm run deploy:aws -- "${AWS_PROFILE:-}" "${AWS_REGION:-us-east-1}" resolveqa-frontend
 ```
 
 The CloudFormation stack creates an encrypted, private S3 bucket and a public HTTPS CloudFront distribution. Origin Access Control restricts bucket reads to this distribution. No server or database is provisioned. CloudFront/S3 usage is billed by AWS.
@@ -25,6 +27,6 @@ Everything else is unchanged, including `/`, `/index.html`, `/_next/*`, `*.txt`,
 
 ## Deploy notes
 
-The deploy script prints the active account before deployment, uploads the export, and waits for cache invalidation. HTML uses revalidation; hashed assets are immutable. Existing assets and S3 object versions are preserved for recovery. Deleting the stack retains the bucket and its contents.
+The deploy script validates credentials quietly (no Account/Arn on stdout), uploads the export, and waits for cache invalidation. HTML uses revalidation; hashed assets are immutable. Existing assets and S3 object versions are preserved for recovery. Deleting the stack retains the bucket and its contents.
 
 For a new release, build the intended commit and run the same deploy command. For rollback, build the previous commit in its own checkout and deploy it to the same stack. No Git merge is performed by these commands.

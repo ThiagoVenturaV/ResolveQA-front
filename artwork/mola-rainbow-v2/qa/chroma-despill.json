@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "input": "ResolveQA-front/artwork/mola-rainbow-v2/final/atlas-before-despill.png",
-  "output": "ResolveQA-front/artwork/mola-rainbow-v2/final/atlas.png",
+  "input": "artwork/mola-rainbow-v2/final/atlas-before-despill.png",
+  "output": "artwork/mola-rainbow-v2/final/atlas.png",
   "chroma_key": "#FF00FF",
   "algorithm": "edge-local-chroma-spill-suppression",
   "strength": 1,

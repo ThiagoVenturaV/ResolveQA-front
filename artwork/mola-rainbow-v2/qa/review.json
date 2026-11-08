@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "frames_root": "ResolveQA-front/artwork/mola-rainbow-v2/frames",
+  "frames_root": "artwork/mola-rainbow-v2/frames",
   "states": [
     "idle",
     "running-right",
@@ -26,7 +26,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/idle/00.png",
+          "file": "artwork/mola-rainbow-v2/frames/idle/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16106,
@@ -41,7 +41,7 @@
         },
         {
           "index": 1,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/idle/01.png",
+          "file": "artwork/mola-rainbow-v2/frames/idle/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16911,
@@ -56,7 +56,7 @@
         },
         {
           "index": 2,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/idle/02.png",
+          "file": "artwork/mola-rainbow-v2/frames/idle/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16096,
@@ -71,7 +71,7 @@
         },
         {
           "index": 3,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/idle/03.png",
+          "file": "artwork/mola-rainbow-v2/frames/idle/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16076,
@@ -86,7 +86,7 @@
         },
         {
           "index": 4,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/idle/04.png",
+          "file": "artwork/mola-rainbow-v2/frames/idle/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16075,
@@ -101,7 +101,7 @@
         },
         {
           "index": 5,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/idle/05.png",
+          "file": "artwork/mola-rainbow-v2/frames/idle/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16149,
@@ -127,7 +127,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-right/00.png",
+          "file": "artwork/mola-rainbow-v2/frames/running-right/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14944,
@@ -142,7 +142,7 @@
         },
         {
           "index": 1,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-right/01.png",
+          "file": "artwork/mola-rainbow-v2/frames/running-right/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13896,
@@ -157,7 +157,7 @@
         },
         {
           "index": 2,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-right/02.png",
+          "file": "artwork/mola-rainbow-v2/frames/running-right/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13056,
@@ -172,7 +172,7 @@
         },
         {
           "index": 3,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-right/03.png",
+          "file": "artwork/mola-rainbow-v2/frames/running-right/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14926,
@@ -187,7 +187,7 @@
         },
         {
           "index": 4,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-right/04.png",
+          "file": "artwork/mola-rainbow-v2/frames/running-right/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14876,
@@ -202,7 +202,7 @@
         },
         {
           "index": 5,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-right/05.png",
+          "file": "artwork/mola-rainbow-v2/frames/running-right/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13907,
@@ -217,7 +217,7 @@
         },
         {
           "index": 6,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-right/06.png",
+          "file": "artwork/mola-rainbow-v2/frames/running-right/06.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13052,
@@ -232,7 +232,7 @@
         },
         {
           "index": 7,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-right/07.png",
+          "file": "artwork/mola-rainbow-v2/frames/running-right/07.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14821,
@@ -258,7 +258,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-left/00.png",
+          "file": "artwork/mola-rainbow-v2/frames/running-left/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14944,
@@ -273,7 +273,7 @@
         },
         {
           "index": 1,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-left/01.png",
+          "file": "artwork/mola-rainbow-v2/frames/running-left/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13896,
@@ -288,7 +288,7 @@
         },
         {
           "index": 2,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-left/02.png",
+          "file": "artwork/mola-rainbow-v2/frames/running-left/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13056,
@@ -303,7 +303,7 @@
         },
         {
           "index": 3,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-left/03.png",
+          "file": "artwork/mola-rainbow-v2/frames/running-left/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14938,
@@ -318,7 +318,7 @@
         },
         {
           "index": 4,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-left/04.png",
+          "file": "artwork/mola-rainbow-v2/frames/running-left/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14882,
@@ -333,7 +333,7 @@
         },
         {
           "index": 5,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-left/05.png",
+          "file": "artwork/mola-rainbow-v2/frames/running-left/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13907,
@@ -348,7 +348,7 @@
         },
         {
           "index": 6,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-left/06.png",
+          "file": "artwork/mola-rainbow-v2/frames/running-left/06.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13052,
@@ -363,7 +363,7 @@
         },
         {
           "index": 7,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-left/07.png",
+          "file": "artwork/mola-rainbow-v2/frames/running-left/07.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14787,
@@ -389,7 +389,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/waving/00.png",
+          "file": "artwork/mola-rainbow-v2/frames/waving/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16337,
@@ -404,7 +404,7 @@
         },
         {
           "index": 1,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/waving/01.png",
+          "file": "artwork/mola-rainbow-v2/frames/waving/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15849,
@@ -419,7 +419,7 @@
         },
         {
           "index": 2,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/waving/02.png",
+          "file": "artwork/mola-rainbow-v2/frames/waving/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15568,
@@ -434,7 +434,7 @@
         },
         {
           "index": 3,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/waving/03.png",
+          "file": "artwork/mola-rainbow-v2/frames/waving/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16179,
@@ -460,7 +460,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/jumping/00.png",
+          "file": "artwork/mola-rainbow-v2/frames/jumping/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15370,
@@ -475,7 +475,7 @@
         },
         {
           "index": 1,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/jumping/01.png",
+          "file": "artwork/mola-rainbow-v2/frames/jumping/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15973,
@@ -490,7 +490,7 @@
         },
         {
           "index": 2,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/jumping/02.png",
+          "file": "artwork/mola-rainbow-v2/frames/jumping/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15823,
@@ -505,7 +505,7 @@
         },
         {
           "index": 3,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/jumping/03.png",
+          "file": "artwork/mola-rainbow-v2/frames/jumping/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15961,
@@ -520,7 +520,7 @@
         },
         {
           "index": 4,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/jumping/04.png",
+          "file": "artwork/mola-rainbow-v2/frames/jumping/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16129,
@@ -546,7 +546,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/failed/00.png",
+          "file": "artwork/mola-rainbow-v2/frames/failed/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15909,
@@ -561,7 +561,7 @@
         },
         {
           "index": 1,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/failed/01.png",
+          "file": "artwork/mola-rainbow-v2/frames/failed/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15279,
@@ -576,7 +576,7 @@
         },
         {
           "index": 2,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/failed/02.png",
+          "file": "artwork/mola-rainbow-v2/frames/failed/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14142,
@@ -591,7 +591,7 @@
         },
         {
           "index": 3,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/failed/03.png",
+          "file": "artwork/mola-rainbow-v2/frames/failed/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 12148,
@@ -606,7 +606,7 @@
         },
         {
           "index": 4,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/failed/04.png",
+          "file": "artwork/mola-rainbow-v2/frames/failed/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 12055,
@@ -621,7 +621,7 @@
         },
         {
           "index": 5,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/failed/05.png",
+          "file": "artwork/mola-rainbow-v2/frames/failed/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13837,
@@ -636,7 +636,7 @@
         },
         {
           "index": 6,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/failed/06.png",
+          "file": "artwork/mola-rainbow-v2/frames/failed/06.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15297,
@@ -651,7 +651,7 @@
         },
         {
           "index": 7,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/failed/07.png",
+          "file": "artwork/mola-rainbow-v2/frames/failed/07.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15796,
@@ -677,7 +677,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/waiting/00.png",
+          "file": "artwork/mola-rainbow-v2/frames/waiting/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16153,
@@ -692,7 +692,7 @@
         },
         {
           "index": 1,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/waiting/01.png",
+          "file": "artwork/mola-rainbow-v2/frames/waiting/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16478,
@@ -707,7 +707,7 @@
         },
         {
           "index": 2,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/waiting/02.png",
+          "file": "artwork/mola-rainbow-v2/frames/waiting/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16986,
@@ -722,7 +722,7 @@
         },
         {
           "index": 3,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/waiting/03.png",
+          "file": "artwork/mola-rainbow-v2/frames/waiting/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16882,
@@ -737,7 +737,7 @@
         },
         {
           "index": 4,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/waiting/04.png",
+          "file": "artwork/mola-rainbow-v2/frames/waiting/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16503,
@@ -752,7 +752,7 @@
         },
         {
           "index": 5,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/waiting/05.png",
+          "file": "artwork/mola-rainbow-v2/frames/waiting/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16145,
@@ -778,7 +778,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running/00.png",
+          "file": "artwork/mola-rainbow-v2/frames/running/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14508,
@@ -793,7 +793,7 @@
         },
         {
           "index": 1,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running/01.png",
+          "file": "artwork/mola-rainbow-v2/frames/running/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13907,
@@ -808,7 +808,7 @@
         },
         {
           "index": 2,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running/02.png",
+          "file": "artwork/mola-rainbow-v2/frames/running/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13080,
@@ -823,7 +823,7 @@
         },
         {
           "index": 3,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running/03.png",
+          "file": "artwork/mola-rainbow-v2/frames/running/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14134,
@@ -838,7 +838,7 @@
         },
         {
           "index": 4,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running/04.png",
+          "file": "artwork/mola-rainbow-v2/frames/running/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15435,
@@ -853,7 +853,7 @@
         },
         {
           "index": 5,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/running/05.png",
+          "file": "artwork/mola-rainbow-v2/frames/running/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14357,
@@ -879,7 +879,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/review/00.png",
+          "file": "artwork/mola-rainbow-v2/frames/review/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16415,
@@ -894,7 +894,7 @@
         },
         {
           "index": 1,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/review/01.png",
+          "file": "artwork/mola-rainbow-v2/frames/review/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16057,
@@ -909,7 +909,7 @@
         },
         {
           "index": 2,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/review/02.png",
+          "file": "artwork/mola-rainbow-v2/frames/review/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15402,
@@ -924,7 +924,7 @@
         },
         {
           "index": 3,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/review/03.png",
+          "file": "artwork/mola-rainbow-v2/frames/review/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15426,
@@ -939,7 +939,7 @@
         },
         {
           "index": 4,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/review/04.png",
+          "file": "artwork/mola-rainbow-v2/frames/review/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16333,
@@ -954,7 +954,7 @@
         },
         {
           "index": 5,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/frames/review/05.png",
+          "file": "artwork/mola-rainbow-v2/frames/review/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16405,

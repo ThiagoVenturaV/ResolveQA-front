@@ -13,11 +13,11 @@
     {
       "state": "jumping",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/jumping/frames/jumping/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/jumping/frames/jumping/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/jumping/frames/jumping/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/jumping/frames/jumping/03.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/jumping/frames/jumping/04.png"
+        "artwork/mola-rainbow-v2/qa/rows/jumping/frames/jumping/00.png",
+        "artwork/mola-rainbow-v2/qa/rows/jumping/frames/jumping/01.png",
+        "artwork/mola-rainbow-v2/qa/rows/jumping/frames/jumping/02.png",
+        "artwork/mola-rainbow-v2/qa/rows/jumping/frames/jumping/03.png",
+        "artwork/mola-rainbow-v2/qa/rows/jumping/frames/jumping/04.png"
       ],
       "method": "components"
     }

@@ -13,12 +13,12 @@
     {
       "state": "running",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/03.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/04.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/05.png"
+        "artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/00.png",
+        "artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/01.png",
+        "artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/02.png",
+        "artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/03.png",
+        "artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/04.png",
+        "artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128/running/05.png"
       ],
       "method": "components"
     }

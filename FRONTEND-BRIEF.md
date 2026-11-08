@@ -2,7 +2,7 @@
 
 Executor: cursor. Coordenador: Codex. Resultado: frontend navegável, responsivo, com personalidade visual e uma mola pixel art que transporta cards entre colunas.
 
-Checkout: `ResolveQA-front`. Vinext/React/TypeScript já instalado.
+Checkout: `.`. Vinext/React/TypeScript já instalado.
 
 Escrita exclusiva do executor: `app/page.tsx`, `app/globals.css`, componentes próprios em `components/mola/`. Não alterar outros arquivos, Git, dependências, configuração ou publicar. Codex cuida de layout, imagens, README, build, QA e publicação.
 

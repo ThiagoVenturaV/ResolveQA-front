@@ -8,7 +8,7 @@ Eight complete separated poses, consistently facing screen-right. Violet rear, b
 
 Commands/results:
 
-- Built-in image generation with canonical base and running-right guide: completed. Original preserved at `<LOCAL_HOME>/.codex/generated_images/01a1b6f3-7311-7051-a988-34bf2355647e/exec-0a370499-75e0-4185-a935-dad5975a17af.png`.
+- Built-in image generation with canonical base and running-right guide: completed. Original preserved at `<local-home>/.codex/generated_images/01a1b6f3-7311-7051-a988-34bf2355647e/exec-0a370499-75e0-4185-a935-dad5975a17af.png`.
 - `extract_strip_frames.py --states running-right --method auto`: exit 0.
 - `inspect_frames.py --states running-right --require-components`: exit 1; only chroma-adjacent fringe counts exceeded threshold.
 - Re-extraction with `--key-threshold 125`: exit 0; inspection exit 1 (two fringe counts above threshold).

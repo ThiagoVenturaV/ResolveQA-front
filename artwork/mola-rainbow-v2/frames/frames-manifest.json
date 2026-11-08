@@ -4,12 +4,12 @@
     {
       "state": "idle",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/idle/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/idle/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/idle/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/idle/03.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/idle/04.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/idle/05.png"
+        "artwork/mola-rainbow-v2/frames/idle/00.png",
+        "artwork/mola-rainbow-v2/frames/idle/01.png",
+        "artwork/mola-rainbow-v2/frames/idle/02.png",
+        "artwork/mola-rainbow-v2/frames/idle/03.png",
+        "artwork/mola-rainbow-v2/frames/idle/04.png",
+        "artwork/mola-rainbow-v2/frames/idle/05.png"
       ],
       "method": "components",
       "source_frames_root": "artwork/mola-rainbow-v2/qa/rows/idle/frames",
@@ -18,14 +18,14 @@
     {
       "state": "running-right",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-right/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-right/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-right/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-right/03.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-right/04.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-right/05.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-right/06.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-right/07.png"
+        "artwork/mola-rainbow-v2/frames/running-right/00.png",
+        "artwork/mola-rainbow-v2/frames/running-right/01.png",
+        "artwork/mola-rainbow-v2/frames/running-right/02.png",
+        "artwork/mola-rainbow-v2/frames/running-right/03.png",
+        "artwork/mola-rainbow-v2/frames/running-right/04.png",
+        "artwork/mola-rainbow-v2/frames/running-right/05.png",
+        "artwork/mola-rainbow-v2/frames/running-right/06.png",
+        "artwork/mola-rainbow-v2/frames/running-right/07.png"
       ],
       "method": "components",
       "source_frames_root": "artwork/mola-rainbow-v2/qa/rows/running-right/frames-threshold130",
@@ -34,14 +34,14 @@
     {
       "state": "running-left",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-left/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-left/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-left/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-left/03.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-left/04.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-left/05.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-left/06.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running-left/07.png"
+        "artwork/mola-rainbow-v2/frames/running-left/00.png",
+        "artwork/mola-rainbow-v2/frames/running-left/01.png",
+        "artwork/mola-rainbow-v2/frames/running-left/02.png",
+        "artwork/mola-rainbow-v2/frames/running-left/03.png",
+        "artwork/mola-rainbow-v2/frames/running-left/04.png",
+        "artwork/mola-rainbow-v2/frames/running-left/05.png",
+        "artwork/mola-rainbow-v2/frames/running-left/06.png",
+        "artwork/mola-rainbow-v2/frames/running-left/07.png"
       ],
       "method": "components",
       "source_frames_root": "artwork/mola-rainbow-v2/qa/rows/running-left/frames",
@@ -50,10 +50,10 @@
     {
       "state": "waving",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/waving/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/waving/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/waving/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/waving/03.png"
+        "artwork/mola-rainbow-v2/frames/waving/00.png",
+        "artwork/mola-rainbow-v2/frames/waving/01.png",
+        "artwork/mola-rainbow-v2/frames/waving/02.png",
+        "artwork/mola-rainbow-v2/frames/waving/03.png"
       ],
       "method": "components",
       "source_frames_root": "artwork/mola-rainbow-v2/qa/rows/waving/frames",
@@ -62,11 +62,11 @@
     {
       "state": "jumping",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/jumping/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/jumping/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/jumping/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/jumping/03.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/jumping/04.png"
+        "artwork/mola-rainbow-v2/frames/jumping/00.png",
+        "artwork/mola-rainbow-v2/frames/jumping/01.png",
+        "artwork/mola-rainbow-v2/frames/jumping/02.png",
+        "artwork/mola-rainbow-v2/frames/jumping/03.png",
+        "artwork/mola-rainbow-v2/frames/jumping/04.png"
       ],
       "method": "components",
       "source_frames_root": "artwork/mola-rainbow-v2/qa/rows/jumping/frames",
@@ -75,14 +75,14 @@
     {
       "state": "failed",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/failed/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/failed/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/failed/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/failed/03.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/failed/04.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/failed/05.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/failed/06.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/failed/07.png"
+        "artwork/mola-rainbow-v2/frames/failed/00.png",
+        "artwork/mola-rainbow-v2/frames/failed/01.png",
+        "artwork/mola-rainbow-v2/frames/failed/02.png",
+        "artwork/mola-rainbow-v2/frames/failed/03.png",
+        "artwork/mola-rainbow-v2/frames/failed/04.png",
+        "artwork/mola-rainbow-v2/frames/failed/05.png",
+        "artwork/mola-rainbow-v2/frames/failed/06.png",
+        "artwork/mola-rainbow-v2/frames/failed/07.png"
       ],
       "method": "components",
       "source_frames_root": "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold128",
@@ -91,12 +91,12 @@
     {
       "state": "waiting",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/waiting/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/waiting/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/waiting/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/waiting/03.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/waiting/04.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/waiting/05.png"
+        "artwork/mola-rainbow-v2/frames/waiting/00.png",
+        "artwork/mola-rainbow-v2/frames/waiting/01.png",
+        "artwork/mola-rainbow-v2/frames/waiting/02.png",
+        "artwork/mola-rainbow-v2/frames/waiting/03.png",
+        "artwork/mola-rainbow-v2/frames/waiting/04.png",
+        "artwork/mola-rainbow-v2/frames/waiting/05.png"
       ],
       "method": "components",
       "source_frames_root": "artwork/mola-rainbow-v2/qa/rows/waiting/frames",
@@ -105,12 +105,12 @@
     {
       "state": "running",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running/03.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running/04.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/running/05.png"
+        "artwork/mola-rainbow-v2/frames/running/00.png",
+        "artwork/mola-rainbow-v2/frames/running/01.png",
+        "artwork/mola-rainbow-v2/frames/running/02.png",
+        "artwork/mola-rainbow-v2/frames/running/03.png",
+        "artwork/mola-rainbow-v2/frames/running/04.png",
+        "artwork/mola-rainbow-v2/frames/running/05.png"
       ],
       "method": "components",
       "source_frames_root": "artwork/mola-rainbow-v2/qa/rows/running/frames-threshold128",
@@ -119,12 +119,12 @@
     {
       "state": "review",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/review/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/review/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/review/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/review/03.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/review/04.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/frames/review/05.png"
+        "artwork/mola-rainbow-v2/frames/review/00.png",
+        "artwork/mola-rainbow-v2/frames/review/01.png",
+        "artwork/mola-rainbow-v2/frames/review/02.png",
+        "artwork/mola-rainbow-v2/frames/review/03.png",
+        "artwork/mola-rainbow-v2/frames/review/04.png",
+        "artwork/mola-rainbow-v2/frames/review/05.png"
       ],
       "method": "components",
       "source_frames_root": "artwork/mola-rainbow-v2/qa/rows/review/frames",

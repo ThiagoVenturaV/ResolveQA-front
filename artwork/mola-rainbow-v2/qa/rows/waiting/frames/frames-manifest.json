@@ -13,12 +13,12 @@
     {
       "state": "waiting",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/waiting/frames/waiting/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/waiting/frames/waiting/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/waiting/frames/waiting/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/waiting/frames/waiting/03.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/waiting/frames/waiting/04.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/waiting/frames/waiting/05.png"
+        "artwork/mola-rainbow-v2/qa/rows/waiting/frames/waiting/00.png",
+        "artwork/mola-rainbow-v2/qa/rows/waiting/frames/waiting/01.png",
+        "artwork/mola-rainbow-v2/qa/rows/waiting/frames/waiting/02.png",
+        "artwork/mola-rainbow-v2/qa/rows/waiting/frames/waiting/03.png",
+        "artwork/mola-rainbow-v2/qa/rows/waiting/frames/waiting/04.png",
+        "artwork/mola-rainbow-v2/qa/rows/waiting/frames/waiting/05.png"
       ],
       "method": "components"
     }

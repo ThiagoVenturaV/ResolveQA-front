@@ -13,12 +13,12 @@
     {
       "state": "review",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/review/frames/review/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/review/frames/review/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/review/frames/review/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/review/frames/review/03.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/review/frames/review/04.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/review/frames/review/05.png"
+        "artwork/mola-rainbow-v2/qa/rows/review/frames/review/00.png",
+        "artwork/mola-rainbow-v2/qa/rows/review/frames/review/01.png",
+        "artwork/mola-rainbow-v2/qa/rows/review/frames/review/02.png",
+        "artwork/mola-rainbow-v2/qa/rows/review/frames/review/03.png",
+        "artwork/mola-rainbow-v2/qa/rows/review/frames/review/04.png",
+        "artwork/mola-rainbow-v2/qa/rows/review/frames/review/05.png"
       ],
       "method": "components"
     }

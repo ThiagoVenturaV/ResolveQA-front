@@ -248,13 +248,13 @@
   ],
   "references": [
     {
-      "path": "ResolveQA-front/artwork/mola-rainbow-v2/references/reference-01.png",
+      "path": "artwork/mola-rainbow-v2/references/reference-01.png",
       "width": 1536,
       "height": 1024,
       "mode": "RGBA",
       "format": "PNG",
-      "source_path": "<LOCAL_HOME>/.codex/generated_images/01a1b60c-fab3-7582-a677-ee102ae13963/exec-1d9b1523-2309-42f4-ab90-f233a9fa659f.png",
-      "copied_path": "ResolveQA-front/artwork/mola-rainbow-v2/references/reference-01.png"
+      "source_path": "<local-home>/.codex/generated_images/01a1b60c-fab3-7582-a677-ee102ae13963/exec-1d9b1523-2309-42f4-ab90-f233a9fa659f.png",
+      "copied_path": "artwork/mola-rainbow-v2/references/reference-01.png"
     }
   ],
   "chroma_key": {

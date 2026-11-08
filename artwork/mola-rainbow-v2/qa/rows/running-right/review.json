@@ -1,6 +1,6 @@
 {
   "ok": false,
-  "frames_root": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames",
+  "frames_root": "artwork/mola-rainbow-v2/qa/rows/running-right/frames",
   "states": [
     "running-right"
   ],
@@ -36,7 +36,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/00.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15188,
@@ -51,7 +51,7 @@
         },
         {
           "index": 1,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/01.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14106,
@@ -66,7 +66,7 @@
         },
         {
           "index": 2,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/02.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13254,
@@ -81,7 +81,7 @@
         },
         {
           "index": 3,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/03.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15173,
@@ -96,7 +96,7 @@
         },
         {
           "index": 4,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/04.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15140,
@@ -111,7 +111,7 @@
         },
         {
           "index": 5,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/05.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14105,
@@ -126,7 +126,7 @@
         },
         {
           "index": 6,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/06.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/06.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13333,
@@ -141,7 +141,7 @@
         },
         {
           "index": 7,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/07.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/running-right/frames/running-right/07.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15119,

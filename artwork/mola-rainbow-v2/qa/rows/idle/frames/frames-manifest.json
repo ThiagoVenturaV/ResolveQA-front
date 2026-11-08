@@ -13,12 +13,12 @@
     {
       "state": "idle",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/idle/frames/idle/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/idle/frames/idle/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/idle/frames/idle/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/idle/frames/idle/03.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/idle/frames/idle/04.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/idle/frames/idle/05.png"
+        "artwork/mola-rainbow-v2/qa/rows/idle/frames/idle/00.png",
+        "artwork/mola-rainbow-v2/qa/rows/idle/frames/idle/01.png",
+        "artwork/mola-rainbow-v2/qa/rows/idle/frames/idle/02.png",
+        "artwork/mola-rainbow-v2/qa/rows/idle/frames/idle/03.png",
+        "artwork/mola-rainbow-v2/qa/rows/idle/frames/idle/04.png",
+        "artwork/mola-rainbow-v2/qa/rows/idle/frames/idle/05.png"
       ],
       "method": "components"
     }

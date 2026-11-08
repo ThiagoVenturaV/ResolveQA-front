@@ -13,14 +13,14 @@
     {
       "state": "failed",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold130/failed/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold130/failed/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold130/failed/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold130/failed/03.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold130/failed/04.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold130/failed/05.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold130/failed/06.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold130/failed/07.png"
+        "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold130/failed/00.png",
+        "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold130/failed/01.png",
+        "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold130/failed/02.png",
+        "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold130/failed/03.png",
+        "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold130/failed/04.png",
+        "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold130/failed/05.png",
+        "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold130/failed/06.png",
+        "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold130/failed/07.png"
       ],
       "method": "components"
     }

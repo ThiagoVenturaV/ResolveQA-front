@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "frames_root": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/waving/frames",
+  "frames_root": "artwork/mola-rainbow-v2/qa/rows/waving/frames",
   "states": [
     "waving"
   ],
@@ -18,7 +18,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/waving/frames/waving/00.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/waving/frames/waving/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16337,
@@ -33,7 +33,7 @@
         },
         {
           "index": 1,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/waving/frames/waving/01.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/waving/frames/waving/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15849,
@@ -48,7 +48,7 @@
         },
         {
           "index": 2,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/waving/frames/waving/02.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/waving/frames/waving/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15568,
@@ -63,7 +63,7 @@
         },
         {
           "index": 3,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/waving/frames/waving/03.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/waving/frames/waving/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16179,

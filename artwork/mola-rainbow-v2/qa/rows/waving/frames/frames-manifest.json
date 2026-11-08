@@ -13,10 +13,10 @@
     {
       "state": "waving",
       "frames": [
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/waving/frames/waving/00.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/waving/frames/waving/01.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/waving/frames/waving/02.png",
-        "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/waving/frames/waving/03.png"
+        "artwork/mola-rainbow-v2/qa/rows/waving/frames/waving/00.png",
+        "artwork/mola-rainbow-v2/qa/rows/waving/frames/waving/01.png",
+        "artwork/mola-rainbow-v2/qa/rows/waving/frames/waving/02.png",
+        "artwork/mola-rainbow-v2/qa/rows/waving/frames/waving/03.png"
       ],
       "method": "components"
     }

@@ -1,6 +1,6 @@
 {
   "ok": false,
-  "frames_root": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127",
+  "frames_root": "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127",
   "states": [
     "failed"
   ],
@@ -22,7 +22,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127/failed/00.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127/failed/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15918,
@@ -37,7 +37,7 @@
         },
         {
           "index": 1,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127/failed/01.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127/failed/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15288,
@@ -52,7 +52,7 @@
         },
         {
           "index": 2,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127/failed/02.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127/failed/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 14146,
@@ -67,7 +67,7 @@
         },
         {
           "index": 3,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127/failed/03.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127/failed/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 12158,
@@ -82,7 +82,7 @@
         },
         {
           "index": 4,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127/failed/04.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127/failed/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 12065,
@@ -97,7 +97,7 @@
         },
         {
           "index": 5,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127/failed/05.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127/failed/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13855,
@@ -112,7 +112,7 @@
         },
         {
           "index": 6,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127/failed/06.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127/failed/06.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15308,
@@ -127,7 +127,7 @@
         },
         {
           "index": 7,
-          "file": "ResolveQA-front/artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127/failed/07.png",
+          "file": "artwork/mola-rainbow-v2/qa/rows/failed/frames-threshold127/failed/07.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15805,
