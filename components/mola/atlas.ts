@@ -88,12 +88,15 @@ export const CLIPS: Record<ClipName, ClipDef> = {
   },
 };
 
-export type TransportPhase = "compress" | "reach" | "carry" | "deliver" | "celebrate";
+export type TransportPhase = "idle" | "seek" | "compress" | "reach" | "carry" | "deliver" | "celebrate" | "return";
 
 export const TRANSPORT_CLIP: Record<TransportPhase, ClipName> = {
+  idle: "idle",
+  seek: "runRight",
+  return: "runLeft",
   compress: "wait",
-  reach: "jump",
-  carry: "work",
+  reach: "work",
+  carry: "runRight",
   deliver: "work",
   celebrate: "review",
 };
@@ -125,3 +128,4 @@ export function backgroundPosition(clip: ClipName, frame: number, displayW: numb
 export function backgroundSize(displayW: number, displayH: number) {
   return `${ATLAS.columns * displayW}px ${ATLAS.rows * displayH}px`;
 }
+
