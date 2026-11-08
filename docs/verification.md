@@ -27,6 +27,25 @@ Os testes anteriores de criação de tarefa, detalhes, filtros, persistência e 
 
 ---
 
+# Fechamento da issue 1 (2026-11-08)
+
+Revalidação após as merges do atlas arco-íris (PR #2) e das poses Slinky/caminhada (PRs #4 e #5), na base `00a6214`. O runtime da issue 1 permanece no `main`; esta rodada só confirma o aceite e registra evidências novas.
+
+| Verificação | Resultado |
+| --- | --- |
+| SHA256 do `public/mascot/mola-rainbow/atlas.png` | PASS — `68d32b5e21a4c5c6ffffa556b3ed17f82b1b89e9529246736014e1f81b0b9bc7` |
+| `npx tsc --noEmit` | PASS, exit 0 |
+| `npm run build` (`/`, `/admin`, `/quadro`) | PASS |
+| HTTP local `/quadro`, `/admin`, atlas | PASS, 200 |
+| Hero: salto e saudação | PASS (Chromium) |
+| Transporte: comprimir → pegar → carregar → entregar → comemorar | PASS; contagem da coluna só muda após a entrega |
+| Layout ~390 px | PASS; hero e quadro usáveis |
+| Capturas | `artwork/mola-rainbow-v2/qa/browser/issue-1-closure-2026-11-08/` |
+
+Aceite da [issue 1](https://github.com/ThiagoVenturaV/ResolveQA-front/issues/1) atendido; esta entrega fecha a issue.
+
+---
+
 # Verificação da primeira entrega
 
 Verificado em 2026-11-07, após revisão independente de código. A interface usa dados demonstrativos locais.
