@@ -1039,7 +1039,7 @@ small {
 }
 .metric-strip {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   border-block: 1px solid var(--line);
   margin-bottom: 27px;
   padding: 20px 0;

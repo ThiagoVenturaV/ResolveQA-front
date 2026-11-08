@@ -30,3 +30,8 @@ Everything else is unchanged, including `/`, `/index.html`, `/_next/*`, `*.txt`,
 The deploy script validates credentials quietly (no Account/Arn on stdout), uploads the export, and waits for cache invalidation. HTML uses revalidation; hashed assets are immutable. Existing assets and S3 object versions are preserved for recovery. Deleting the stack retains the bucket and its contents.
 
 For a new release, build the intended commit and run the same deploy command. For rollback, build the previous commit in its own checkout and deploy it to the same stack. No Git merge is performed by these commands.
+
+## CI/CD
+
+Push (or merge) to `main` runs `.github/workflows/deploy-aws.yml` and deploys this stack automatically via GitHub OIDC (`AWS_ROLE_ARN`). Merge remains manual. `workflow_dispatch` allows a manual re-deploy from Actions.
+

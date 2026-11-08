@@ -7,7 +7,7 @@ import {
   explainText,
   friendlyError,
 } from "@/lib/resolveqa/copy";
-import { useCallback, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   Activity,
   ArrowDownToLine,
@@ -15,6 +15,7 @@ import {
   BookOpen,
   Bot,
   Check,
+  CircleDollarSign,
   Clock3,
   FileText,
   GitBranch,
@@ -51,6 +52,54 @@ import {
   type Run,
 } from "@/lib/resolveqa/domain";
 
+/** Optional labeled estimate from backend/API — never fabricated in the browser. */
+type UsageSnapshot = {
+  version: 1;
+  label: "estimate";
+  currency: "USD";
+  llm_calls: number;
+  tokens_in: number;
+  tokens_out: number;
+  estimated_usd: number;
+  source?: string;
+};
+
+const USAGE_KEY = "mola.usage.v1";
+
+function isNonNegFinite(n: unknown): n is number {
+  return typeof n === "number" && Number.isFinite(n) && n >= 0;
+}
+
+function readUsageSnapshot(): UsageSnapshot | null {
+  try {
+    const saved = JSON.parse(localStorage.getItem(USAGE_KEY) || "null");
+    if (
+      saved?.version === 1 &&
+      saved?.currency === "USD" &&
+      saved?.label === "estimate" &&
+      isNonNegFinite(saved.llm_calls) &&
+      isNonNegFinite(saved.tokens_in) &&
+      isNonNegFinite(saved.tokens_out) &&
+      isNonNegFinite(saved.estimated_usd)
+    ) {
+      const source = typeof saved.source === "string" ? saved.source.slice(0, 80) : undefined;
+      return {
+        version: 1,
+        label: "estimate",
+        currency: "USD",
+        llm_calls: saved.llm_calls,
+        tokens_in: saved.tokens_in,
+        tokens_out: saved.tokens_out,
+        estimated_usd: saved.estimated_usd,
+        ...(source ? { source } : {}),
+      };
+    }
+  } catch {
+    /* offline admin stays honest — no invented tokens or USD */
+  }
+  return null;
+}
+
 export default function AdminPage() {
   const r = useRuntime();
   const [now, setNow] = useState(() => Date.now());
@@ -62,7 +111,11 @@ export default function AdminPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [traceCase, setTraceCase] = useState("");
+  const [usage, setUsage] = useState<UsageSnapshot | null>(null);
   const closeDetails = useCallback(() => setSelected(null), []);
+  useEffect(() => {
+    setUsage(readUsageSnapshot());
+  }, []);
   const filtered = useMemo(
     () =>
       r.snapshot.cases.filter(
@@ -311,6 +364,26 @@ export default function AdminPage() {
                     : "—"}
                 </strong>
                 <small>Tempo que cobre ao menos 95% dos casos encerrados</small>
+              </div>
+              <div data-kpi="llm-cost">
+                <span>
+                  <CircleDollarSign size={15} />
+                  Custo LLM
+                </span>
+                {usage ? (
+                  <>
+                    <strong>USD {usage.estimated_usd.toFixed(4)}</strong>
+                    <small>
+                      estimate · {usage.llm_calls} calls · {usage.tokens_in}/{usage.tokens_out} tok
+                      {usage.source ? ` · ${usage.source}` : ""}
+                    </small>
+                  </>
+                ) : (
+                  <>
+                    <strong aria-label="Sem dados de custo">—</strong>
+                    <small>sem dados · snapshot rotulado mola.usage.v1</small>
+                  </>
+                )}
               </div>
             </section>
             <div className="overview-grid">
