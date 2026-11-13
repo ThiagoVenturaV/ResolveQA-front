@@ -242,27 +242,23 @@ export default function BoardPage() {
               )}
             </select>
           </label>
-          <div className="demo-controls">
-            <button
-              className="rq-button small"
-              onClick={r.step}
-              title={
-                r.mode === "production"
-                  ? "Avança o próximo caso aberto no backend"
-                  : "Avança o exemplo local"
-              }
-            >
-              <SkipForward size={14} />
-              Avançar tarefa
-            </button>
-            <button
-              className="rq-button small"
-              onClick={() => r.setPlaying(!r.playing)}
-            >
-              {r.playing ? <Pause size={14} /> : <Play size={14} />}
-              {r.playing ? "Pausar" : "Reproduzir"}
-            </button>
-            {r.mode === "demo" && (
+          {r.mode === "demo" && (
+            <div className="demo-controls">
+              <button
+                className="rq-button small"
+                onClick={r.step}
+                title="Avança o exemplo local"
+              >
+                <SkipForward size={14} />
+                Avançar tarefa
+              </button>
+              <button
+                className="rq-button small"
+                onClick={() => r.setPlaying(!r.playing)}
+              >
+                {r.playing ? <Pause size={14} /> : <Play size={14} />}
+                {r.playing ? "Pausar" : "Reproduzir"}
+              </button>
               <button
                 className="rq-icon-button"
                 aria-label="Reiniciar exemplos"
@@ -270,8 +266,8 @@ export default function BoardPage() {
               >
                 <RotateCcw size={15} />
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
         {layout === "board" ? (
           <section className="live-board" aria-label="Quadro Kanban">
@@ -281,9 +277,11 @@ export default function BoardPage() {
                 data-lane={lane.id}
                 key={lane.id}
                 onDragOver={(e) => {
+                  if (r.mode !== "demo") return;
                   e.preventDefault();
                 }}
                 onDrop={(e) => {
+                  if (r.mode !== "demo") return;
                   e.preventDefault();
                   const id = e.dataTransfer.getData("text/resolveqa-id");
                   if (id) void r.moveCase(id, targetStates[lane.id]);
@@ -307,8 +305,9 @@ export default function BoardPage() {
                         className={`live-card ${hidden === c.case_id ? "card-carrying" : ""}`}
                         key={c.case_id}
                         data-run-id={c.case_id}
-                        draggable={!r.jobs.length}
+                        draggable={r.mode === "demo" && !r.jobs.length}
                         onDragStart={(e) => {
+                          if (r.mode !== "demo") return;
                           e.dataTransfer.setData(
                             "text/resolveqa-id",
                             c.case_id,

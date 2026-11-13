@@ -27,7 +27,6 @@ import {
 } from "@/lib/resolveqa/demo";
 import {
   apiUrl,
-  advanceCase,
   createCase,
   deleteRemotePlaybook,
   fetchCase,
@@ -362,73 +361,16 @@ export function RuntimeProvider({
     };
   }, [mode, ready, config, revision, commit, ingest]);
 
-  const applyRemoteAdvance = useCallback(
-    (before: Run, updated: Run, fromState: Run["state"] | null) => {
-      const from = fromState ?? before.state;
-      const ev = eventSchema.parse({
-        event_id: crypto.randomUUID(),
-        case_id: updated.case_id,
-        seq:
-          Math.max(
-            0,
-            ...current.current.events
-              .filter((e) => e.case_id === updated.case_id)
-              .map((e) => e.seq),
-          ) + 1,
-        ts: updated.updated_at,
-        source: "orchestrator",
-        type: "StateChanged",
-        from_state: from,
-        to_state: updated.state,
-        reason:
-          "Avanço manual pelo Quadro; sincronizado no armazenamento do backend.",
-        evidence_refs: [],
-      });
+  const step = useCallback(() => {
+    if (modeRef.current !== "demo") return;
+    const next = nextDemoEvent(current.current);
+    if (next.run)
       commit({
         ...current.current,
-        cases: [
-          ...current.current.cases.filter((c) => c.case_id !== updated.case_id),
-          updated,
-        ],
+        cases: [next.run, ...current.current.cases],
       });
-      ingest(ev);
-    },
-    [commit, ingest],
-  );
-  const step = useCallback(() => {
-    if (modeRef.current === "demo") {
-      const next = nextDemoEvent(current.current);
-      if (next.run)
-        commit({
-          ...current.current,
-          cases: [next.run, ...current.current.cases],
-        });
-      ingest(next.event);
-      return;
-    }
-    const run = current.current.cases.find(
-      (c) =>
-        c.state !== "verified" &&
-        c.state !== "needs_info" &&
-        c.state !== "blocked" &&
-        c.state !== "infra_error",
-    );
-    if (!run) return;
-    void (async () => {
-      try {
-        setError("");
-        const { case: updated, from_state } = await advanceCase(
-          configRef.current ?? config,
-          run.case_id,
-        );
-        applyRemoteAdvance(run, updated, from_state);
-        setConnection("Caso avançado no backend");
-        setLastSync(new Date().toLocaleTimeString("pt-BR"));
-      } catch (e) {
-        setError(friendlyError(e));
-      }
-    })();
-  }, [applyRemoteAdvance, commit, config, ingest]);
+    ingest(next.event);
+  }, [commit, ingest]);
   useEffect(() => {
     if (!playing) return;
     const t = setInterval(step, 5500);
@@ -541,82 +483,60 @@ export function RuntimeProvider({
         moveCase: async (id, state) => {
           const run = current.current.cases.find((c) => c.case_id === id);
           if (!run || run.state === state) return;
-          if (mode === "demo") {
+          if (mode !== "demo") {
+            setError(
+              "Em produção o quadro só observa o worker; movimento manual desligado.",
+            );
+            return;
+          }
+          const ev = eventSchema.parse({
+            event_id: crypto.randomUUID(),
+            case_id: id,
+            seq:
+              Math.max(
+                0,
+                ...current.current.events
+                  .filter((e) => e.case_id === id)
+                  .map((e) => e.seq),
+              ) + 1,
+            ts: new Date().toISOString(),
+            source: "orchestrator",
+            type: "StateChanged",
+            from_state: run.state,
+            to_state: state,
+            reason:
+              "Movimento manual de demonstração; não constitui verificação real.",
+            evidence_refs: [],
+          });
+          ingest(ev);
+        },
+        moveDemo: (id, state) => {
+          if (modeRef.current !== "demo") return;
+          void rMove(id, state);
+          async function rMove(caseId: string, next: typeof state) {
+            const run = current.current.cases.find((c) => c.case_id === caseId);
+            if (!run || run.state === next) return;
             const ev = eventSchema.parse({
               event_id: crypto.randomUUID(),
-              case_id: id,
+              case_id: caseId,
               seq:
                 Math.max(
                   0,
                   ...current.current.events
-                    .filter((e) => e.case_id === id)
+                    .filter((e) => e.case_id === caseId)
                     .map((e) => e.seq),
                 ) + 1,
               ts: new Date().toISOString(),
               source: "orchestrator",
               type: "StateChanged",
               from_state: run.state,
-              to_state: state,
+              to_state: next,
               reason:
                 "Movimento manual de demonstração; não constitui verificação real.",
               evidence_refs: [],
             });
             ingest(ev);
-            return;
           }
-          try {
-            setError("");
-            const { case: updated, from_state } = await advanceCase(
-              configRef.current,
-              id,
-              { to_state: state },
-            );
-            applyRemoteAdvance(run, updated, from_state);
-            setConnection("Caso atualizado no backend");
-            setLastSync(new Date().toLocaleTimeString("pt-BR"));
-          } catch (e) {
-            setError(friendlyError(e));
-          }
-        },
-        moveDemo: (id, state) => {
-          void (async () => {
-            const run = current.current.cases.find((c) => c.case_id === id);
-            if (!run || run.state === state) return;
-            if (modeRef.current === "demo") {
-              const ev = eventSchema.parse({
-                event_id: crypto.randomUUID(),
-                case_id: id,
-                seq:
-                  Math.max(
-                    0,
-                    ...current.current.events
-                      .filter((e) => e.case_id === id)
-                      .map((e) => e.seq),
-                  ) + 1,
-                ts: new Date().toISOString(),
-                source: "orchestrator",
-                type: "StateChanged",
-                from_state: run.state,
-                to_state: state,
-                reason:
-                  "Movimento manual de demonstração; não constitui verificação real.",
-                evidence_refs: [],
-              });
-              ingest(ev);
-              return;
-            }
-            try {
-              setError("");
-              const { case: updated, from_state } = await advanceCase(
-                configRef.current,
-                id,
-                { to_state: state },
-              );
-              applyRemoteAdvance(run, updated, from_state);
-            } catch (e) {
-              setError(friendlyError(e));
-            }
-          })();
         },
       }}
     >
