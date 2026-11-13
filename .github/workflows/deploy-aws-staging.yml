@@ -16,7 +16,6 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: staging
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,7 +32,7 @@ jobs:
       - name: Build staging export
         env:
           RESOLVEQA_MODE: production
-          RESOLVEQA_API_URL: ${{ vars.RESOLVEQA_API_URL_STAGING }}
+          RESOLVEQA_API_URL: ${{ vars.RESOLVEQA_API_URL_STAGING || vars.RESOLVEQA_API_URL }}
           RESOLVEQA_SNAPSHOT_PATH: /api/snapshot
           RESOLVEQA_EVENTS_PATH: /api/events
           RESOLVEQA_CASE_IDS: ${{ vars.RESOLVEQA_CASE_IDS_STAGING }}
@@ -54,13 +53,13 @@ jobs:
       - name: Deploy staging CloudFront/S3
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
-        run: npm run deploy:aws -- "" "${{ secrets.AWS_REGION }}" "${{ secrets.AWS_STACK_NAME_STAGING }}"
+        run: npm run deploy:aws -- "" "${{ secrets.AWS_REGION }}" "${{ secrets.AWS_STACK_NAME_STAGING || secrets.AWS_STACK_NAME }}"
 
       - name: Smoke staging SiteUrl + backend health
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
-          STACK: ${{ secrets.AWS_STACK_NAME_STAGING }}
-          RESOLVEQA_API_URL: ${{ vars.RESOLVEQA_API_URL_STAGING }}
+          STACK: ${{ secrets.AWS_STACK_NAME_STAGING || secrets.AWS_STACK_NAME }}
+          RESOLVEQA_API_URL: ${{ vars.RESOLVEQA_API_URL_STAGING || vars.RESOLVEQA_API_URL }}
         run: |
           set -euo pipefail
           url=$(aws cloudformation describe-stacks --stack-name "$STACK" \
