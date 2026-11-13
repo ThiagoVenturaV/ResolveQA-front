@@ -61,7 +61,9 @@ export function NewCaseForm({ onClose }: { onClose: () => void }) {
             name="company"
             required
             maxLength={120}
-            defaultValue={r.mode === "demo" ? "Acme Commerce" : ""}
+            defaultValue={
+              r.mode === "demo" ? "Acme Commerce" : "resolveqa"
+            }
             placeholder="Identificador da empresa"
           />
         </label>
@@ -71,7 +73,11 @@ export function NewCaseForm({ onClose }: { onClose: () => void }) {
             name="repo"
             required
             maxLength={240}
-            defaultValue={r.mode === "demo" ? "acme/checkout" : ""}
+            defaultValue={
+              r.mode === "demo"
+                ? "acme/checkout"
+                : "targets/resolveqa-checkout"
+            }
             placeholder="Nome do projeto"
           />
         </label>
